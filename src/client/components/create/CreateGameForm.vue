@@ -12,7 +12,7 @@
                     <div class="create-game-page-container">
                         <div class="create-game-page-column">
                             <h4 v-i18n>№ of Players</h4>
-                            <div v-for="pCount in [1,2,3,4,5,6]" v-bind:key="pCount">
+                            <div v-for="pCount in [1,2,3,4,5,6,7]" v-bind:key="pCount">
                               <input type="radio" :value="pCount" name="playersCount" v-model="playersCount" :id="pCount+'-radio'">
                               <label :for="pCount+'-radio'">
                                   {{ getPlayersCountText(pCount) }}

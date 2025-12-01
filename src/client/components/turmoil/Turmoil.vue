@@ -58,7 +58,7 @@
         <div class="grid-parties">
           <div v-for="party in turmoil.parties" :key="party.name" :class="'board-party board-party--'+partyNameToCss(party.name)">
             <div class="grid-delegates">
-              <div class="delegate-spot" v-for="n in 6" :key="n">
+              <div class="delegate-spot" v-for="n in 7" :key="n">
                 <div v-if="party.delegates.length >= n" :class="'player-token '+party.delegates[n-1].color">{{ party.delegates[n-1].number }}</div>
               </div>
             </div>

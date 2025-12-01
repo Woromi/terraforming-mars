@@ -7,7 +7,7 @@
         </div>
       </div>
       <div class="grid-delegates grid-in-send-delegate">
-        <div class="delegate-spot" v-for="n in 6" :key="n">
+        <div class="delegate-spot" v-for="n in 7" :key="n">
           <div v-if="party.delegates.length >= n" :class="'player-token '+party.delegates[n-1].color">
             <div class="count-in-send-delegate">{{ party.delegates[n-1].number }}</div>
           </div>
