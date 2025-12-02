@@ -1,0 +1,137 @@
+{
+  "Psychrophiles": "",
+    "Action: Add 1 microbe to this card.": "",
+    "Effect: When paying for a plant card, microbes here may be used as 2 M€ each.": "",
+    "Temperature must be -20 C or lower.": "",
+
+  "Research Coordination": "",
+    "After being played, when you perform an action, the wild tag counts as any tag of your choice.": "",
+
+  "SF Memorial": "",
+    "Draw 1 card.": "",
+
+  "Martian Survey": "",
+    "Oxygen must be 4% or lower. Draw two cards.": "",
+
+  "House Printing": "",
+    "Increase your steel production 1 step.": "",
+
+  "Space Hotels": "",
+    "Requires 2 Earth tags. Increase M€ production 4 steps.": "",
+
+  "Lava Tube Settlement": "",
+    "Decrease your energy production 1 step and increase your M€ production 2 steps. Place a city tile on a VOLCANIC AREA regardless of adjacent cities.": "",
+  
+  "Industrial Complex": "",
+    "Lose 18 M€. INCREASE ALL YOUR PRODUCTIONS THAT ARE LOWER THAN 1, TO 1.": "",
+  
+  "Soil Bacteria": "",
+    "Effect: When playing a plant tag or a microbe tag, including this, gain 1 plant.": "",
+    "Draw 2 microbe cards and gain 3 plants.": "",
+  
+  "Preservation Program": "",
+    "Effect: SKIP THE FIRST TR YOU GAIN IN EACH GENERATION'S ACTION PHASE.": "",
+    "Raise your TR 5 steps.": "",
+  
+  "Venus L1 Shade": "",
+  
+  "Old Mining Colony": "",
+    "Increase your titanium production 1 step. Place 1 colony. Discard 1 card.": "",
+    
+  "Colonial Representation": "",
+    "Gain 3 M€ per colony you have.": "",
+    
+  "Envoys From Venus": "",
+    "Requires 3 Venus tags. Place 2 delegates in 1 party.": "",
+    
+  "Colonial Envoys": "",
+    "Requires that Unity is ruling or that you have 2 delegates there. Place 1 delegate for each colony you have. YOU MAY PLACE THEM IN SEPERATE PARTIES.": "",
+    
+  "Jovian Envoys": "",
+    "Requires 2 Jovian tags. Place 2 delegates in 1 party.": "",
+    
+  "Microgravity Nutrition": "",
+    "Increase your M€ production 1 step for each colony you have.": "",
+    
+  "Sponsoring Nation": "",
+    "Requires 4 Earth tags. Gain 3 TR. Place 2 delegates.": "",
+    
+  "Stratospheric Expedition": "",
+    "Add two floaters to ANY CARD. Draw 2 Venus cards.": "",
+    
+  "Summit Logistics": "",
+    "Requires that Scientists are ruling or that you have 2 delegates there. Gain 1 M€ per planet tag and colony you have. Draw 2 cards.": "",
+  
+  "Terraforming Deal": "",
+    "Effect: Each step your TR is raised, you gain 2 M€.": "",
+    
+  "Venus Contract": "",
+    "Effect: Each step you raise Venus, gain 3 M€.": "",
+    "Draw 1 Venus card. Raise your TR 1 step.": "",
+  
+  "Project Eden": "",
+    "Place 1 ocean tile, 1 city tile, and 1 greenery tile. Discard 3 cards.": "",
+    
+  "Planetary Alliance": "",
+    "Raise your TR 2 steps. Draw 1 Jovian card and 1 Venus card.": "",
+    
+  "Recession": "",
+    "EACH OPPONENT loses 5 M€ and decreases their M€ production 1 step. You gain 10 M€.": "",
+
+  "Nobel Prize": "",
+    "Gain 5 M€. Draw 2 cards with requirements.": "",
+
+  "Rise To Power": "",
+    "Increase your M€ production 3 steps and place 3 delegates. YOU MAY PLACE THEM IN SEPARATE PARTIES.": "",
+
+  "Space Lanes": "",
+    "Effect: When you play a Jovian, Earth, or Venus tag, you pay 2 M€ less for it.": "",
+    "Gain 3 titanium.": "",
+  
+  "World Government Advisor": "",
+    "Action: RAISE 1 GLOBAL PARAMETER WITHOUT GETTING ANY TR OR OTHER BONUSES.": "",
+    "Raise your TR 2 steps. Draw 1 card.": "",
+  
+  "Main Belt Asteroids": "",
+    "Action: Gain 1 asteroid to ANY CARD.": "",
+    "Effect: When gaining an asteroid HERE, gain 1 titanium.": "",
+    "Lose 5 M€. 1 VP per 2 asteroids here.": "",
+
+  "Colony Trade Hub": "",
+    "Effect: When any colony is placed, gain 2 M€.": "",
+    "Increase your energy production 1 step. Gain 2 titanium": "",
+    
+  "Applied Science": "",
+    "Action: Remove 1 resource here to either add 1 resource to ANY CARD WITH A RESOURCE or gain 1 standard resource.": "",
+    "Add 6 science resources here.": "",
+ 
+  "Atmospheric Enhancers": "",
+    "Raise temperature 2 steps, or raise oxygen 2 steps, or raise Venus 2 steps. Draw 2 cards with floater icons.": "",
+
+  "Board of Directors": "",
+    "ACTION: ": "",
+    "DRAW 1 PRELUDE CARD: EITHER DISCARD IT, OR PAY 12 M€ AND REMOVE 1 DIRECTOR RESOURCE HERE TO PLAY IT.": "",
+    "Add 4 director resources here.": "",
+  
+  "Floating Trade Hub": "",
+    "Action: Add 2 floaters to ANY card.": "",
+    "Action: Remove any number of floaters here to gain that many of one standard resource.": "",
+  
+  "Early Colonization": "",
+    "INCREASE ALL COLONY TRACKS 2 STEPS": "",
+    "Place a colony. Gain 3 energy.": "",
+  
+  "Corridors of Power": "",
+    "Effect: Each time you become party leader, draw 1 card.": "",
+    "Raise your TR 1 step and gain 4 M€": "",
+  
+  "Focused Organization": "",
+    "Action: Discard 1 card and spend 1 standard resource to draw 1 card and gain 1 standard resource.": "",
+    "Draw 1 card and gain 1 standard resource.": "",
+  
+  "Suitable Infrastructure": "",
+    "Effect: Once per action you take, gain 2 M€ if you increase any productions.": "",
+  
+  "High Circles": "",
+    "Raise your TR 1 step and draw 1 card with PARTY REQUIREMENT. Place 2 delegates in one party.": ""
+}

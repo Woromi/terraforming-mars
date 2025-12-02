@@ -1,0 +1,166 @@
+{
+  "Allied Bank": "",
+    "Increase your M€ production 4 steps. Gain 3 M€.": "",
+
+  "Aquifer Turbines": "",
+    "Place an ocean tile. Increase your energy production 2 steps. Pay 3 M€.": "",
+
+  "Biofuels": "",
+    "Increase your energy and plant production 1 step. Gain 2 plants.": "",
+
+  "Biolab": "",
+    "Increase your plant production 1 step. Draw 3 cards.": "",
+
+  "Biosphere Support": "",
+    "Increase your plant production 2 steps. Decrease your M€ production 1 step.": "",
+
+  "Business Empire": "",
+    "Increase your M€ production 6 steps. Pay 6 M€.": "",
+
+  "Dome Farming": "",
+    "Increase your M€ production 2 steps and plant production 1 step.": "",
+
+  "Donation": "",
+    "Gain 21 M€.": "",
+
+  "Early Settlement": "",
+    "Increase your plant production 1 step. Place a city tile.": "",
+
+  "Ecology Experts": "",
+    "Increase your plant production 1 step. PLAY A CARD FROM HAND, IGNORING GLOBAL REQUIREMENTS.": "",
+
+  "Eccentric Sponsor": "",
+    "Play a card from hand, reducing its cost by 25 M€": "",
+
+  "Experimental Forest": "",
+    "Place 1 greenery tile and raise oxygen 1 step. Reveal cards until you reveal two cards with plant tags on them. Take them into your hand and discard the rest.": "",
+
+  "Galilean Mining": "",
+    "Increase your titanium production 2 steps. Pay 5 M€.": "",
+
+  "Great Aquifer": "",
+    "Place 2 ocean tiles.": "",
+
+  "Huge Asteroid": "",
+    "Increase temperature 3 steps. Pay 5 M€.": "",
+
+  "Io Research Outpost": "",
+    "Increase your titanium production 1 step. Draw a card.": "",
+
+  "Loan": "",
+    "Gain 30 M€. Decrease your M€ production 2 steps.": "",
+
+  "Martian Industries": "",
+    "Increase your energy and steel production 1 step. Gain 6 M€.": "",
+
+  "Metal-Rich Asteroid": "",
+    "Increase temperature 1 step. Gain 4 titanium and 4 steel.": "",
+
+  "Metals Company": "",
+    "Increase your M€, steel and titanium production 1 step.": "",
+
+  "Mining Operations": "",
+    "Increase your steel production 2 steps. Gain 4 steel.": "",
+
+  "Mohole": "",
+    "Increase your heat production 3 steps. Gain 3 heat.": "",
+
+  "Mohole Excavation": "",
+    "Increase your steel production 1 step and heat production 2 steps. Gain 2 heat.": "",
+
+  "Nitrogen Shipment": "",
+    "Increase your plant production 1 step. Increase your TR 1 step. Gain 5 M€.": "",
+
+  "Orbital Construction Yard": "",
+    "Increase your titanium production 1 step. Gain 4 titanium.": "",
+
+  "Polar Industries": "",
+    "Increase your heat production 2 steps. Place an ocean tile.": "",
+
+  "Power Generation": "",
+    "Increase your energy production 3 steps.": "",
+
+  "Research Network": "",
+    "Increase your M€ production 1 step. Draw 3 cards. After being played, when you perform an action, the wild tag counts as any tag of your choice.": "",
+
+  "Self-Sufficient Settlement": "",
+    "Increase your M€ production 2 steps. Place a city tile.": "",
+
+  "Smelting Plant": "",
+    "Raise oxygen 2 steps. Gain 5 steel.": "",
+
+  "Society Support": "",
+    "Increase your plant, energy and heat production 1 step. Decrease M€ production 1 step.": "",
+
+  "Supplier": "",
+    "Increase your energy production 2 steps. Gain 4 steel.": "",
+
+  "Supply Drop": "",
+    "Gain 3 titanium, 8 steel and 3 plants.": "",
+
+  "UNMI Contractor": "",
+    "Increase your TR 3 steps. Draw a card.": "",
+
+  "Acquired Space Agency": "",
+    "Gain 6 titanium. Reveal cards until you reveal two cards with Space Tags. Take them into your hand, discard the rest.": "",
+    "Add resource to card GHG Producing Bacteria": "",
+    "Add resource to card Fish": "",
+    "Add resource": "",
+    "Gain plant": "",
+
+  "Frontier Town": "",
+    "Requires that Mars First is ruling or that you have 2 delegates there. Decrease your energy production one step. Place a city tile. GAIN THE PRINTED PLACEMENT BONUS 2 ADDITIONAL TIMES.": "",
+
+  "Cloud Tourism": "",
+    "Increase your M€ production 1 step for each pair of Earth and Venus tags you own. 1 VP for every 3rd floater on this card.": "",
+
+  "Ceres Tech Market": "",
+    "Action: Discard any number of cards from your hand to gain 2 M€ for each discarded card.": "",
+    "Gain 2 M€ per colony you own.": "",
+
+  "WG Project": "",
+    "Requires that you are Chairman. DRAW 3 PRELUDE CARDS AND PLAY 1 OF THEM, Discard the other 2.": "",
+
+  "Unexpected Application": "",
+    "Discard 1 card to terraform Venus 1 step.": "",
+
+  "Venus Allies": "",
+    "Raise Venus 2 steps. Gain 4 M€ per colony you have.": "",
+
+  "Venus Trade Hub": "",
+    "Effect: When you trade, gain 3 M€.": "",
+    "Requires 2 Venus tags.": "",
+
+  "Venus Shuttles": "",
+    "Action: Spend 12 M€ to raise Venus 1 step. This cost is REDUCED BY 1 FOR EACH VENUS TAG you have.": "",
+    "Add 2 floaters to ANY VENUS CARD.": "",
+
+  "Venus Orbital Survey": "",
+    "Action: Reveal the top 2 cards, take any venus cards to hand for free. Any other card you either buy or discard": "",
+
+  "Red Appeasement": "",
+    "Requires that Reds are ruling or that you have 2 delegates there, AND THAT NO OTHER PLAYER HAS PASSED.": "",
+    "PASS": "",
+    "Increase M€ production 2 steps. This counts as passing. You get no other turns this generation.": "",
+
+  "Special Permit": "",
+    "Requires that Greens are ruling or that you have 2 delegates there. Steal 4 plants from any player.": "",
+
+  "Soil Studies": "",
+    "Requires that temperature is -4 C or lower. Gain 1 plant per Venus tag, plant tag, and colony you have.": "",
+
+  "GHG Shipment": "",
+    "Requires that Kelvinists are in power or that you have 2 delegates there. Increase your heat production 1 step. Gain 1 heat for each floater you have.": "",
+
+  "Ishtar Expedition": "",
+    "Requires Venus 10%. Gain 3 titanium and draw 2 Venus cards.": "",
+
+  "L1 Trade Terminal": "",
+    "Effect: When you trade, you may first increase that colony tile track 2 steps.": "",
+    "Add a resource to 3 different cards that already have resources.": "",
+
+  "Floating Refinery": "",
+    "Action: Add 1 floater here.": "",
+    "Action: Remove 2 floaters from ANY CARD to gain 1 titanium and 2 M€.": "",
+    "Add 1 floater here for each Venus tag you have.": ""
+}
