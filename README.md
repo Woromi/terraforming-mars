@@ -1,3 +1,5 @@
+Fork: In this fork, I allowed creating 7 players. It works, but in case there are limited resources, the game may stop without any warning. 
+
 # <a name="README"> Terraforming Mars Open-source
 
 <div align="center">
