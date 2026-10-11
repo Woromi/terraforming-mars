@@ -8,7 +8,7 @@ import {PlaceGreeneryTile} from '../deferredActions/PlaceGreeneryTile';
 import {PlaceMoonMineTile} from '../moon/PlaceMoonMineTile';
 import {PlaceMoonRoadTile} from '../moon/PlaceMoonRoadTile';
 import {PlaceOceanTile} from '../deferredActions/PlaceOceanTile';
-import {PlanetaryTracks} from '../../common/pathfinders/PlanetaryTracks';
+import {PLANETARY_TRACKS} from '../../common/pathfinders/PlanetaryTracks';
 import {IPlayer} from '../IPlayer';
 import {Resource} from '../../common/Resource';
 import {CardResource} from '../../common/CardResource';
@@ -16,14 +16,10 @@ import {Reward} from '../../common/pathfinders/Reward';
 import {SelectResource} from '../inputs/SelectResource';
 import {SendDelegateToArea} from '../deferredActions/SendDelegateToArea';
 import {Tag} from '../../common/cards/Tag';
-import {Turmoil} from '../turmoil/Turmoil';
 import {VictoryPointsBreakdownBuilder} from '../game/VictoryPointsBreakdownBuilder';
 import {GlobalEventName} from '../../common/turmoil/globalEvents/GlobalEventName';
 import {Priority} from '../deferredActions/Priority';
 import {message} from '../logs/MessageBuilder';
-import {Units} from '../../common/Units';
-
-export const TRACKS = PlanetaryTracks.initialize();
 
 export class PathfindersExpansion {
   private constructor() {
@@ -52,6 +48,26 @@ export class PathfindersExpansion {
     });
   }
 
+  public static willGainEnergyProductionOnNextMarsTag(player: IPlayer, count: 1 | 2 = 1): boolean {
+    const data = player.game.pathfindersData;
+    if (data === undefined) {
+      return false;
+    }
+    const idx = data[Tag.MARS] + count;
+    const rewards = PLANETARY_TRACKS[Tag.MARS].spaces[idx]?.risingPlayer;
+
+    if (rewards === undefined) {
+      return false;
+    }
+    if (rewards.includes('energy_production')) {
+      return true;
+    }
+    if (count === 2) {
+      return this.willGainEnergyProductionOnNextMarsTag(player, 1);
+    }
+    return false;
+  }
+
   public static raiseTrack(tag: PlanetaryTag, player: IPlayer, steps: number = 1): void {
     PathfindersExpansion.raiseTrackEssense(tag, player, player.game, steps, true);
   }
@@ -67,7 +83,7 @@ export class PathfindersExpansion {
       // throw new Error('Pathfinders not defined');
     }
 
-    const track = TRACKS[tag];
+    const track = PLANETARY_TRACKS[tag];
     if (track === undefined) {
       return;
     }
@@ -81,7 +97,9 @@ export class PathfindersExpansion {
 
     const lastSpace = Math.min(track.spaces.length - 1, space + steps);
     const distance = lastSpace - space;
-    if (distance === 0) return;
+    if (distance === 0) {
+      return;
+    }
 
     if (typeof(from) === 'object') {
       game.log('${0} raised the ${1} planetary track ${2} step(s)', (b) => {
@@ -160,13 +178,13 @@ export class PathfindersExpansion {
       game.defer(new PlaceCityTile(player));
       break;
     case 'delegate':
-      Turmoil.ifTurmoilElse(game,
-        (turmoil) => {
-          if (turmoil.hasDelegatesInReserve(player)) {
-            game.defer(new SendDelegateToArea(player));
-          }
-        },
-        () => player.stock.add(Resource.MEGACREDITS, 3, {log: true}));
+      if (game.turmoil) {
+        if (game.turmoil.hasDelegatesInReserve(player)) {
+          game.defer(new SendDelegateToArea(player));
+        }
+      } else {
+        player.stock.add(Resource.MEGACREDITS, 3, {log: true});
+      }
       break;
     case 'energy':
       player.stock.add(Resource.ENERGY, 1, {log: true});
@@ -205,7 +223,7 @@ export class PathfindersExpansion {
     case 'resource':
       player.defer(new SelectResource(message('Gain ${0} units of a standard resource', (b) => b.number(1)))
         .andThen((unit) => {
-          player.stock.add(Units.ResourceMap[unit], 1, {log: true});
+          player.stock.add(unit, 1, {log: true});
           return undefined;
         }));
       break;
@@ -228,7 +246,7 @@ export class PathfindersExpansion {
       if (game.gameOptions.venusNextExtension) {
         game.increaseVenusScaleLevel(player, 1);
       } else {
-        player.game.log('TODO: come up with some reward in place of Increase Venus Scale.');
+        console.warn('Unexpected state: gaining venus reward without a Venus Next in play.');
       }
       break;
     default:

@@ -32,10 +32,7 @@ export class TheGrandLunaCapitalGroup extends CorporationCard implements ICorpor
       },
 
       metadata: {
-        description: {
-          text: 'You start with 32 M€ and 1 titanium. As your first action, place a habitat tile on The Moon and raise the habitat rate 1 step.',
-          align: 'left',
-        },
+        description: 'You start with 32 M€ and 1 titanium. As your first action, place a habitat tile on The Moon and raise the habitat rate 1 step.',
         cardNumber: 'MC7',
         renderData: CardRenderer.builder((b) => {
           b.megacredits(32).titanium(1).moonHabitat({secondaryTag: AltSecondaryTag.MOON_HABITAT_RATE}).br;
@@ -43,7 +40,7 @@ export class TheGrandLunaCapitalGroup extends CorporationCard implements ICorpor
             eb.moonHabitat({size: Size.SMALL, all}).moonHabitat({size: Size.SMALL}).asterix()
               .startEffect
               .megacredits(2).slash().moonHabitat({size: Size.SMALL, all});
-          }).br,
+          }).br;
           b.vpText('1 VP for each habitat tile adjacent to your habitat tiles.').br;
         }),
         victoryPoints: moonHabitatTile(1),

@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {testGame} from '../../TestGame';
 import {MarsFrontierAlliance} from '../../../src/server/cards/pathfinders/MarsFrontierAlliance';
-import {addGreenery, cast, runAllActions, runNextAction} from '../../TestingUtils';
+import {addGreenery, runAllActions, runNextAction} from '../../TestingUtils';
 import {IPlayer} from '../../../src/server/IPlayer';
 import {PartyName} from '../../../src/common/turmoil/PartyName';
 import {Turmoil} from '../../../src/server/turmoil/Turmoil';
@@ -12,6 +12,7 @@ import {Phase} from '../../../src/common/Phase';
 import {TestPlayer} from '../../TestPlayer';
 import {IGame} from '../../../src/server/IGame';
 import {Game} from '../../../src/server/Game';
+import {cast} from '../../../src/common/utils/utils';
 
 describe('MarsFrontierAlliance', () => {
   let card: MarsFrontierAlliance;
@@ -49,7 +50,7 @@ describe('MarsFrontierAlliance', () => {
     player.setAlliedParty(reds);
 
     game.phase = Phase.SOLAR;
-    turmoil.endGeneration(game);
+    turmoil.runTurmoilPhase(game);
     runAllActions(game);
 
     const selectBonus: OrOptions = getWaitingFor(player);
@@ -84,7 +85,7 @@ describe('MarsFrontierAlliance', () => {
     turmoil.sendDelegateToParty(player, greens.name, game);
 
     game.phase = Phase.SOLAR;
-    turmoil.endGeneration(game);
+    turmoil.runTurmoilPhase(game);
     expect(player.getTitaniumValue()).to.equal(3);
   });
 

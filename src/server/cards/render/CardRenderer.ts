@@ -3,13 +3,29 @@ import {CardRenderSymbol} from './CardRenderSymbol';
 import {Size} from '../../../common/cards/render/Size';
 import {CardRenderItemType} from '../../../common/cards/render/CardRenderItemType';
 import {TileType} from '../../../common/TileType';
-import {ICardRenderCorpBoxAction, ICardRenderCorpBoxEffect, ICardRenderCorpBoxEffectAction, ICardRenderEffect, ICardRenderProductionBox, ICardRenderRoot, ICardRenderTile, ItemType, isICardRenderItem} from '../../../common/cards/render/Types';
+import {ICardRenderCorpBoxAction, ICardRenderCorpBoxEffect, ICardRenderCorpBoxEffectAction, ICardRenderEffect, ICardRenderProductionBox, ICardRenderRoot, ICardRenderTile, ItemType, isICardRenderItem, isICardRenderSymbol} from '../../../common/cards/render/Types';
+import {CardRenderSymbolType} from '../../../common/cards/render/CardRenderSymbolType';
 import {AltSecondaryTag} from '../../../common/cards/render/AltSecondaryTag';
 import {CardResource} from '../../../common/CardResource';
 import {Tag} from '../../../common/cards/Tag';
+import {liteBoolean, LiteBoolean} from '../../../common/LiteBoolean';
+import {isLiveServer} from '../../utils/server';
+
+export type TextOptions = {
+  size?: Size;
+  uppercase?: boolean;
+  isBold?: boolean;
+  inParens?: boolean;
+}
 
 export class CardRenderer {
   public static builder(f: (builder: Builder<CardRenderRoot>) => void): ICardRenderRoot {
+    // The live server never reads renderData (only export_card_rendering.ts does,
+    // to build the client's cards.json at compile time), so skip building the
+    // real tree there to avoid the CPU cost and per-card-name retained memory.
+    if (isLiveServer()) {
+      return EMPTY_ROOT;
+    }
     const builder = new RootBuilder();
     f(builder);
     return builder.build();
@@ -21,9 +37,14 @@ class CardRenderRoot implements ICardRenderRoot {
   constructor(public rows: Array<Array<ItemType>> = [[]]) {}
 }
 
+const EMPTY_ROOT = new CardRenderRoot();
+
 class CardRenderProductionBox implements ICardRenderProductionBox {
   public readonly is = 'production-box';
-  constructor(public rows: Array<Array<ItemType>>) {}
+  public rows: Array<Array<ItemType>>;
+  constructor(rows: Array<Array<ItemType>>) {
+    this.rows = rows;
+  }
 
   public static builder(f: (builder: ProductionBoxBuilder) => void): CardRenderProductionBox {
     const builder = new ProductionBoxBuilder();
@@ -34,12 +55,23 @@ class CardRenderProductionBox implements ICardRenderProductionBox {
 
 class CardRenderTile implements ICardRenderTile {
   public readonly is = 'tile';
-  constructor(public tile: TileType, public hasSymbol: boolean, public isAres: boolean) { }
+  public tile: TileType;
+  public hasSymbol: LiteBoolean;
+  public isAres: LiteBoolean;
+  constructor(tile: TileType, hasSymbol: boolean, isAres: boolean) {
+    this.tile = tile;
+    this.hasSymbol = liteBoolean(hasSymbol);
+    this.isAres = liteBoolean(isAres);
+  }
 }
 
 class CardRenderEffect implements ICardRenderEffect {
   public readonly is = 'effect';
-  constructor(public rows: Array<Array<ItemType>>) {}
+  public rows: Array<Array<ItemType>>;
+
+  constructor(rows: Array<Array<ItemType>>) {
+    this.rows = rows;
+  }
 
   public static builder(f: (builder: EffectBuilder) => void): CardRenderEffect {
     const builder = new EffectBuilder();
@@ -67,7 +99,10 @@ class CardRenderEffect implements ICardRenderEffect {
 
 class CardRenderCorpBoxEffect implements ICardRenderCorpBoxEffect {
   public readonly is = 'corp-box-effect';
-  constructor(public rows: Array<Array<ItemType>>) { }
+  public rows: Array<Array<ItemType>>;
+  constructor(rows: Array<Array<ItemType>>) {
+    this.rows = rows;
+  }
 
   public static builder(f: (builder: CorpEffectBuilderEffect) => void): CardRenderCorpBoxEffect {
     const builder = new CorpEffectBuilderEffect();
@@ -78,7 +113,10 @@ class CardRenderCorpBoxEffect implements ICardRenderCorpBoxEffect {
 
 class CardRenderCorpBoxAction implements ICardRenderCorpBoxAction {
   public readonly is = 'corp-box-action';
-  constructor(public rows: Array<Array<ItemType>>) { }
+  public rows: Array<Array<ItemType>>;
+  constructor(rows: Array<Array<ItemType>>) {
+    this.rows = rows;
+  }
 
   public static builder(f: (builder: CorpEffectBuilderAction) => void): CardRenderCorpBoxAction {
     const builder = new CorpEffectBuilderAction();
@@ -89,7 +127,10 @@ class CardRenderCorpBoxAction implements ICardRenderCorpBoxAction {
 
 class CardRenderCorpBoxEffectAction implements ICardRenderCorpBoxEffectAction {
   public readonly is = 'corp-box-effect-action';
-  constructor(public rows: Array<Array<ItemType>>) { }
+  public rows: Array<Array<ItemType>>;
+  constructor(rows: Array<Array<ItemType>>) {
+    this.rows = rows;
+  }
 
   public static builder(f: (builder: CorpEffectBuilderEffectAction) => void): CardRenderCorpBoxEffectAction {
     const builder = new CorpEffectBuilderEffectAction();
@@ -115,7 +156,20 @@ abstract class Builder<T> {
     if (this.superscript && isICardRenderItem(thing)) {
       thing.isSuperscript = true;
     }
-    this._currentRow().push(thing);
+    const row = this._currentRow();
+    // A negative amount renders as a minus symbol followed by the absolute value.
+    // Items that show their amount inside (e.g. megacredits) render their own sign.
+    if (isICardRenderItem(thing) && !thing.amountInside && thing.amount !== undefined && thing.amount < 0) {
+      // TODO(kberg): Remove this guard after 2028-10-05. It is here for forks of this repo, whose cards
+      // may still be written as minus().x(-n), which would now render two minus symbols.
+      const previous = row[row.length - 1];
+      if (isICardRenderSymbol(previous) && previous.type === CardRenderSymbolType.MINUS) {
+        throw new Error('Negative amount already has a minus symbol; remove minus() or use a positive amount.');
+      }
+      row.push(CardRenderSymbol.minus(Size.MEDIUM));
+      thing.amount = -thing.amount;
+    }
+    row.push(thing);
     return this;
   }
 
@@ -167,7 +221,7 @@ abstract class Builder<T> {
   public megacredits(amount: number, options?: ItemOptions): this {
     const item = new CardRenderItem(CardRenderItemType.MEGACREDITS, amount, options);
     item.amountInside = true;
-    item.showDigit = false;
+    item.showDigit = undefined;
     item.size = options?.size ?? Size.MEDIUM;
     return this._appendToRow(item);
   }
@@ -177,10 +231,10 @@ abstract class Builder<T> {
   }
 
   public trade(options?: ItemOptions): this {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.TRADE, -1, options));
+    return this._appendToRow(new CardRenderItem(CardRenderItemType.TRADE, undefined, options));
   }
   public tradeFleet(options?: ItemOptions): this {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.TRADE_FLEET, -1, options));
+    return this._appendToRow(new CardRenderItem(CardRenderItemType.TRADE_FLEET, undefined, options));
   }
 
   public colonies(amount: number = 1, options?: ItemOptions): this {
@@ -196,7 +250,7 @@ abstract class Builder<T> {
   }
 
   public colonyTile(options?: ItemOptions): this {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.COLONY_TILE, -1, options));
+    return this._appendToRow(new CardRenderItem(CardRenderItemType.COLONY_TILE, undefined, options));
   }
 
   public influence(options?: ItemOptions): this {
@@ -204,7 +258,7 @@ abstract class Builder<T> {
   }
 
   public city(options?: ItemOptions) {
-    const item = new CardRenderItem(CardRenderItemType.CITY, -1, options);
+    const item = new CardRenderItem(CardRenderItemType.CITY, undefined, options);
     item.size = options?.size ?? Size.MEDIUM;
     return this._appendToRow(item);
   }
@@ -232,12 +286,12 @@ abstract class Builder<T> {
     return this._appendToRow(new CardRenderItem(CardRenderItemType.DELEGATES, amount, options));
   }
 
-  public partyLeaders(amount: number = -1) {
+  public partyLeaders(amount?: number) {
     return this._appendToRow(new CardRenderItem(CardRenderItemType.PARTY_LEADERS, amount));
   }
 
   public chairman(options?: ItemOptions) {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.CHAIRMAN, -1, options));
+    return this._appendToRow(new CardRenderItem(CardRenderItemType.CHAIRMAN, undefined, options));
   }
 
   public policy() {
@@ -249,7 +303,7 @@ abstract class Builder<T> {
   }
 
   public noTags() {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.NO_TAGS, -1));
+    return this._appendToRow(new CardRenderItem(CardRenderItemType.NO_TAGS));
   }
 
   public emptyTag(count: number = 1) {
@@ -283,7 +337,7 @@ abstract class Builder<T> {
       opts = {...options};
     }
     opts.resource = resource;
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.RESOURCE, -1, opts));
+    return this._appendToRow(new CardRenderItem(CardRenderItemType.RESOURCE, undefined, opts));
   }
 
   public selfReplicatingRobots() {
@@ -343,8 +397,8 @@ abstract class Builder<T> {
     return this._appendToRow(new CardRenderItem(CardRenderItemType.MOON_ROAD, 1, options));
   }
 
-  public moonLogisticsRate(options?: ItemOptions): this {
-    return this._appendToRow(new CardRenderItem(CardRenderItemType.MOON_LOGISTICS_RATE, 1, options));
+  public moonLogisticRate(options?: ItemOptions): this {
+    return this._appendToRow(new CardRenderItem(CardRenderItemType.MOON_LOGISTIC_RATE, 1, options));
   }
 
   public moonMine(options?: ItemOptions): this {
@@ -374,7 +428,7 @@ abstract class Builder<T> {
   }
 
   public cityorSpecialTile(options?: ItemOptions) {
-    const item = new CardRenderItem(CardRenderItemType.CITY_OR_SPECIAL_TILE, -1, options);
+    const item = new CardRenderItem(CardRenderItemType.CITY_OR_SPECIAL_TILE, undefined, options);
     item.size = options?.size ?? Size.MEDIUM;
     return this._appendToRow(item);
   }
@@ -395,7 +449,7 @@ abstract class Builder<T> {
   }
 
   public claim(count: number = 1) {
-    return this.text('CLAIM').nbsp.text(count.toString());
+    return this.text('CLAIM').text(' ' + count.toString());
   }
 
   public corruption(count: number = 1, options?: ItemOptions) {
@@ -425,11 +479,11 @@ abstract class Builder<T> {
 
   public emptyTile(type: 'normal' | 'golden' = 'normal', options?: ItemOptions) {
     if (type === 'normal') {
-      const normal = new CardRenderItem(CardRenderItemType.EMPTY_TILE, -1, options);
+      const normal = new CardRenderItem(CardRenderItemType.EMPTY_TILE, undefined, options);
       normal.size = options?.size ?? Size.MEDIUM;
       this._appendToRow(normal);
     } else if (type === 'golden') {
-      const golden = new CardRenderItem(CardRenderItemType.EMPTY_TILE_GOLDEN, -1, options);
+      const golden = new CardRenderItem(CardRenderItemType.EMPTY_TILE_GOLDEN, undefined, options);
       golden.size = options?.size ?? Size.MEDIUM;
       this._appendToRow(golden);
     }
@@ -517,31 +571,31 @@ abstract class Builder<T> {
     return this._appendToRow(item);
   }
 
-  public text(text: string, size: Size = Size.MEDIUM, uppercase: boolean = false, isBold: boolean = true): this {
+  public text(text: string, options: TextOptions = {}): this {
+    const completeOptions = {
+      size: Size.MEDIUM,
+      uppercase: false,
+      isBold: true,
+      inParens: false,
+      ...options,
+    };
+
+
     const item = new CardRenderItem(CardRenderItemType.TEXT);
     item.text = text;
-    item.size = size;
-    item.isUppercase = uppercase;
-    item.isBold = isBold;
+    item.size = completeOptions.size;
+    item.isUppercase = liteBoolean(completeOptions.uppercase);
+    item.isBold = liteBoolean(completeOptions.isBold);
+    item.inParens = liteBoolean(completeOptions.inParens);
     return this._appendToRow(item);
   }
 
-  public text2(text: string, options: {size?: Size, caps?: boolean, bold?: boolean, all?: boolean}) {
-    const item = new CardRenderItem(CardRenderItemType.TEXT);
-    item.text = text;
-    item.size = options.size || Size.MEDIUM;
-    item.isUppercase = options.caps || false;
-    item.isBold = options.bold || true;
-    item.anyPlayer = options.all;
-    return this._appendToRow(item);
-  }
-
-  public plainText(text: string) {
-    return this.text(text, Size.SMALL, false, false);
+  public plainText(text: string, parens: boolean = false) {
+    return this.text(text, {size: Size.SMALL, isBold: false, inParens: parens});
   }
 
   public vpText(text: string): this {
-    return this.text(text, Size.TINY, true);
+    return this.text(text, {size: Size.TINY, uppercase: true});
   }
 
   public get br(): this {

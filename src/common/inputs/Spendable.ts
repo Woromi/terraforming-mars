@@ -5,7 +5,7 @@ import {CardName} from '../cards/CardName';
  */
 export const SPENDABLE_STANDARD_RESOURCES = [
   // Standard currency for paying for stuff
-  'megaCredits',
+  'megacredits',
   // Helion corporation can spend heat as M€.
   'heat',
   // Used for cards with building tags
@@ -28,7 +28,6 @@ export const SPENDABLE_CARD_RESOURCES = [
   'lunaArchivesScience',
   // Spire corporation can spend its science resources on standrad projects.
   'spireScience',
-  // TODO(kberg): add test for Soylent Seedling Systems + Psychophiles.
   // Soylent Seedling Systems corporation can use its seeds to pay for cards with plant tags, or the standard greenery project.
   'seeds',
   // Aurorai corporation can use its data to pay for standard projects.
@@ -48,7 +47,7 @@ export type SpendableCardResource = typeof SPENDABLE_CARD_RESOURCES[number];
 /** Types of resources spent to pay for things. */
 export type SpendableResource = SpendableStandardResource | SpendableCardResource;
 
-export const CARD_FOR_SPENDABLE_RESOURCE: Record<SpendableCardResource, CardName> = {
+export const CARD_FOR_SPENDABLE_RESOURCE = {
   microbes: CardName.PSYCHROPHILES,
   floaters: CardName.DIRIGIBLES,
   lunaArchivesScience: CardName.LUNA_ARCHIVES,
@@ -57,4 +56,4 @@ export const CARD_FOR_SPENDABLE_RESOURCE: Record<SpendableCardResource, CardName
   auroraiData: CardName.AURORAI,
   graphene: CardName.CARBON_NANOSYSTEMS,
   kuiperAsteroids: CardName.KUIPER_COOPERATIVE,
-} as const;
+} satisfies Record<SpendableCardResource, CardName>;

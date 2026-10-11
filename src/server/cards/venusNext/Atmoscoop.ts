@@ -7,12 +7,11 @@ import {OrOptions} from '../../inputs/OrOptions';
 import {SelectOption} from '../../inputs/SelectOption';
 import {CardResource} from '../../../common/CardResource';
 import {CardName} from '../../../common/cards/CardName';
-import * as constants from '../../../common/constants';
 import {PartyHooks} from '../../turmoil/parties/PartyHooks';
-import {PartyName} from '../../../common/turmoil/PartyName';
 import {CardRenderer} from '../render/CardRenderer';
 import {Size} from '../../../common/cards/render/Size';
 import {Card} from '../Card';
+import {LogHelper} from '../../LogHelper';
 
 export class Atmoscoop extends Card implements IProjectCard {
   constructor() {
@@ -41,9 +40,9 @@ export class Atmoscoop extends Card implements IProjectCard {
   }
 
   public override bespokeCanPlay(player: IPlayer): boolean {
-    if (PartyHooks.shouldApplyPolicy(player, PartyName.REDS, 'rp01')) {
+    if (PartyHooks.reds01PolicyInEffect(player)) {
       const cost = player.getCardCost(this);
-      if (!player.canAfford(cost)) {
+      if (!player.canAfford({cost, titanium: true})) {
         return false;
       }
       // TODO(kberg): this is not correct, because the titanium can't be used for the reds cost.
@@ -62,10 +61,12 @@ export class Atmoscoop extends Card implements IProjectCard {
 
     const increaseTemp = new SelectOption('Raise temperature 2 steps', 'Raise temperature').andThen(() => {
       game.increaseTemperature(player, 2);
+      LogHelper.logTemperatureIncrease(player, 2);
       return undefined;
     });
     const increaseVenus = new SelectOption('Raise Venus 2 steps', 'Raise Venus').andThen(() => {
       game.increaseVenusScaleLevel(player, 2);
+      LogHelper.logVenusIncrease(player, 2);
       return undefined;
     });
     const increaseTempOrVenus = new OrOptions(increaseTemp, increaseVenus)
@@ -73,8 +74,10 @@ export class Atmoscoop extends Card implements IProjectCard {
 
     if (!this.temperatureIsMaxed(game) && this.venusIsMaxed(game)) {
       player.game.increaseTemperature(player, 2);
+      LogHelper.logTemperatureIncrease(player, 2);
     } else if (this.temperatureIsMaxed(game) && !this.venusIsMaxed(game)) {
       player.game.increaseVenusScaleLevel(player, 2);
+      LogHelper.logVenusIncrease(player, 2);
     } else {
       return increaseTempOrVenus;
     }
@@ -82,10 +85,10 @@ export class Atmoscoop extends Card implements IProjectCard {
   }
 
   private temperatureIsMaxed(game: IGame) {
-    return game.getTemperature() === constants.MAX_TEMPERATURE;
+    return game.getTemperature() === game.max.temperature;
   }
 
   private venusIsMaxed(game: IGame) {
-    return game.getVenusScaleLevel() === constants.MAX_VENUS_SCALE;
+    return game.getVenusScaleLevel() === game.max.venus;
   }
 }

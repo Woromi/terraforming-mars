@@ -3,7 +3,7 @@ import {IPlayer} from '../IPlayer';
 import {Board} from '../boards/Board';
 import {MoonExpansion} from '../moon/MoonExpansion';
 import {PathfindersExpansion} from '../pathfinders/PathfindersExpansion';
-import {Turmoil} from '../turmoil/Turmoil';
+import {DeltaProjectExpansion} from '../delta/DeltaProjectExpansion';
 import {VictoryPointsBreakdownBuilder} from './VictoryPointsBreakdownBuilder';
 import {FundedAward} from '../awards/FundedAward';
 import {AwardScorer} from '../awards/AwardScorer';
@@ -66,12 +66,9 @@ export function calculateVictoryPoints(player: IPlayer) {
 
   // Turmoil Victory Points
   const includeTurmoilVP = player.game.gameIsOver() || player.game.phase === Phase.END;
-
-  Turmoil.ifTurmoil(player.game, (turmoil) => {
-    if (includeTurmoilVP) {
-      builder.setVictoryPoints('victoryPoints', turmoil.getVictoryPoints(player), 'Turmoil Points');
-    }
-  });
+  if (player.game.turmoil && includeTurmoilVP) {
+    builder.setVictoryPoints('victoryPoints', player.game.turmoil.getVictoryPoints(player), 'Turmoil Points');
+  }
 
   const coloniesVP = player.colonies.getVictoryPoints();
   if (coloniesVP > 0) {
@@ -79,6 +76,7 @@ export function calculateVictoryPoints(player: IPlayer) {
   }
   MoonExpansion.calculateVictoryPoints(player, builder);
   PathfindersExpansion.calculateVictoryPoints(player, builder);
+  DeltaProjectExpansion.calculateVictoryPoints(player, builder);
 
   // Underworld Score Bribing
   if (player.game.gameOptions.underworldExpansion === true) {
@@ -116,7 +114,9 @@ function maybeSetVP(thisPlayer: IPlayer, awardWinner: IPlayer, fundedAward: Fund
 
 function giveAwards(player: IPlayer, builder: VictoryPointsBreakdownBuilder) {
   // Awards are disabled for 1 player games
-  if (player.game.isSoloMode()) return;
+  if (player.game.isSoloMode()) {
+    return;
+  }
 
   player.game.fundedAwards.forEach((fundedAward) => {
     const award = fundedAward.award;

@@ -1,32 +1,24 @@
 <template>
-  <div :class="getClasses()" />
+  <div class="card-tag" :class="`tag-${type}`"></div>
 </template>
 
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import {Tag} from '@/common/cards/Tag';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'CardTag',
   props: {
     index: {
       type: Number,
       required: true,
-      validator: (i) => i < 4,
+      validator: (i: number) => i < 4,
     },
     type: {
       type: String,
       required: true,
       validator: (type: Tag | 'asterisk') => type === 'asterisk' || Object.values(Tag).includes(type),
-    },
-  },
-  methods: {
-    getClasses(): string {
-      const classes = ['card-tag'];
-      classes.push(`tag-${this.type.toLocaleLowerCase()}`);
-
-      return classes.join(' ');
     },
   },
 });

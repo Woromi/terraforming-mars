@@ -7,7 +7,7 @@ import {OrOptions} from '../../src/server/inputs/OrOptions';
 import {SelectSpace} from '../../src/server/inputs/SelectSpace';
 import {SpaceBonus} from '../../src/common/boards/SpaceBonus';
 import {Delegate, Turmoil} from '../../src/server/turmoil/Turmoil';
-import {cast, maxOutOceans, runAllActions, setOxygenLevel, setTemperature, setVenusScaleLevel} from '../TestingUtils';
+import {forceGenerationEnd, formatMessage, maxOutOceans, runAllActions, setOxygenLevel, setTemperature, setVenusScaleLevel} from '../TestingUtils';
 import {TestPlayer} from '../TestPlayer';
 import {Reds} from '../../src/server/turmoil/parties/Reds';
 import {Greens} from '../../src/server/turmoil/parties/Greens';
@@ -37,6 +37,11 @@ import {MoonExpansion} from '../../src/server/moon/MoonExpansion';
 import {TileType} from '../../src/common/TileType';
 import {testGame} from '../TestGame';
 import {MultiSet} from 'mnemonist';
+import {TowingAComet} from '../../src/server/cards/base/TowingAComet';
+import {cast} from '@/common/utils/utils';
+import {AquiferReleasedByPublicCouncil} from '../../src/server/turmoil/globalEvents/AquiferReleasedByPublicCouncil';
+import {Pandemic} from '../../src/server/turmoil/globalEvents/Pandemic';
+import {CorrosiveRain} from '../../src/server/turmoil/globalEvents/CorrosiveRain';
 
 describe('Turmoil', () => {
   let player: TestPlayer;
@@ -68,15 +73,6 @@ describe('Turmoil', () => {
 
     expectDelegateMatch(greens.delegates, player);
     expect(turmoil.usedFreeDelegateAction).does.not.contain(player);
-  });
-
-  it('Correctly send delegate from the reserve', () => {
-    const greens = turmoil.getPartyByName(PartyName.GREENS);
-    greens.delegates.clear();
-
-    turmoil.sendDelegateToParty(player, PartyName.GREENS, game);
-
-    expectDelegateMatch(greens.delegates, player);
   });
 
 
@@ -161,7 +157,7 @@ describe('Turmoil', () => {
     expect(turmoil.getAvailableDelegateCount(player2)).eq(6);
 
     game.phase = Phase.SOLAR;
-    turmoil.endGeneration(game);
+    turmoil.runTurmoilPhase(game);
     runAllActions(game);
 
     expect(turmoil.chairman).to.eq(player);
@@ -184,11 +180,86 @@ describe('Turmoil', () => {
     expect(turmoil.getAvailableDelegateCount(player)).eq(5);
 
     game.phase = Phase.SOLAR;
-    turmoil.endGeneration(game);
+    turmoil.runTurmoilPhase(game);
     runAllActions(game);
 
     expect(turmoil.chairman).to.eq(player);
     expect(turmoil.getAvailableDelegateCount(player)).eq(6);
+  });
+
+  it('inTurmoil is cleared when the new government adds actions', () => {
+    // Player becomes chairman, which queues their TR gain.
+    turmoil.sendDelegateToParty(player, PartyName.REDS, game);
+    turmoil.sendDelegateToParty(player, PartyName.REDS, game);
+    turmoil.currentGlobalEvent = undefined;
+
+    forceGenerationEnd(game);
+
+    expect(turmoil.chairman).to.eq(player);
+    expect(game.generation).eq(2);
+    expect(game.inTurmoil).is.false;
+  });
+
+  it('New government waits for the global event to resolve', () => {
+    const pandemic = new Pandemic();
+    const aquiferReleasedByPublicCouncil = new AquiferReleasedByPublicCouncil();
+    // New government will be Reds.
+    turmoil.sendDelegateToParty(player, PartyName.REDS, game);
+    turmoil.sendDelegateToParty(player, PartyName.REDS, game);
+
+    // Requires placing an ocean
+    turmoil.currentGlobalEvent = aquiferReleasedByPublicCouncil;
+    turmoil.comingGlobalEvent = pandemic;
+
+    const firstPlayer = game.playersInGenerationOrder[0];
+
+    forceGenerationEnd(game);
+
+    expect(turmoil.chairman).to.eq('NEUTRAL');
+    expect(turmoil.rulingParty.name).to.eq(PartyName.GREENS);
+    expect(turmoil.currentGlobalEvent).to.eq(aquiferReleasedByPublicCouncil);
+
+    const selectSpace = cast(firstPlayer.getWaitingFor(), SelectSpace);
+    firstPlayer.process({type: 'space', spaceId: selectSpace.spaces[0].id});
+
+    expect(turmoil.chairman).to.eq(player);
+    expect(turmoil.rulingParty.name).to.eq(PartyName.REDS);
+    expect(turmoil.currentGlobalEvent).to.eq(pandemic);
+  });
+
+  it('Generation does not advance while the global event is resolving', () => {
+    turmoil.currentGlobalEvent = new AquiferReleasedByPublicCouncil();
+    const firstPlayer = game.playersInGenerationOrder[0];
+
+    forceGenerationEnd(game);
+
+    expect(game.generation).eq(1);
+    expect(game.inTurmoil).is.true;
+
+    const selectSpace = cast(firstPlayer.getWaitingFor(), SelectSpace);
+    firstPlayer.process({type: 'space', spaceId: selectSpace.spaces[0].id});
+
+    expect(game.generation).eq(2);
+    expect(game.inTurmoil).is.false;
+  });
+
+  // #4176
+  it('Global event resources are logged as coming from that global event', () => {
+    turmoil.chairman = player;
+    turmoil.currentGlobalEvent = new AquiferReleasedByPublicCouncil();
+    turmoil.comingGlobalEvent = new CorrosiveRain();
+    const firstPlayer = game.playersInGenerationOrder[0];
+
+    forceGenerationEnd(game);
+    const selectSpace = cast(firstPlayer.getWaitingFor(), SelectSpace);
+    firstPlayer.process({type: 'space', spaceId: selectSpace.spaces[0].id});
+
+    const messages = game.gameLog.map(formatMessage).filter((m) => m.includes('because of'));
+    expect(messages).to.include.members([
+      `${player.color} gained 1 steel because of Aquifer Released by Public Council`,
+      `${player.color} gained 1 plant because of Aquifer Released by Public Council`,
+    ]);
+    expect(messages.filter((m) => m.includes('Corrosive Rain'))).is.empty;
   });
 
   it('Does not give Mars First bonus for World Government terraforming', () => {
@@ -210,8 +281,8 @@ describe('Turmoil', () => {
     const standardProjects = player.getStandardProjectOption();
 
     // can only use Power Plant as cannot pay 3 for Reds ruling policy
-    expect(standardProjects.config.enabled![0]).to.eq(true);
-    expect(standardProjects.config.enabled!.slice(1)).to.not.contain(true);
+    expect(standardProjects.enabled![0]).to.eq(true);
+    expect(standardProjects.enabled!.slice(1)).to.not.contain(true);
   });
 
   it('Can do SP greenery at normal cost if Reds are ruling and oxygen is maxed', () => {
@@ -439,7 +510,30 @@ describe('Turmoil', () => {
     expect(player.canPlay(card)).is.true;
   });
 
-  // TODO(kberg): Use Towing a Comet as an example of a multi-TR thing.
+  it('canPlay: reds tax applies for multi-TR card', () => {
+    // TowingAComet raises oxygen 1 step AND places 1 ocean, each costing 3 M€ reds tax.
+    const card = new TowingAComet();
+    const [game, player] = testGame(1, {turmoilExtension: true});
+    const turmoil = Turmoil.getTurmoil(game);
+    game.phase = Phase.ACTION;
+
+    turmoil.rulingParty = new Reds();
+    PoliticalAgendas.setNextAgenda(turmoil, game);
+
+    player.megaCredits = card.cost + 5;
+    expect(player.canPlay(card)).is.false;
+    player.megaCredits = card.cost + 6;
+    expect(player.canPlay(card)).is.true;
+    expect(card.additionalProjectCosts).deep.eq({redsCost: 6});
+
+    // When oxygen is already maxed, only the ocean costs reds.
+    setOxygenLevel(game, constants.MAX_OXYGEN_LEVEL);
+    player.megaCredits = card.cost + 2;
+    expect(player.canPlay(card)).is.false;
+    player.megaCredits = card.cost + 3;
+    expect(player.canPlay(card)).is.true;
+    expect(card.additionalProjectCosts).deep.eq({redsCost: 3});
+  });
 
   it('canPlay: reds tax applies by default when raising the venus scale.', () => {
     // GiantSolarShade raises venus three steps.

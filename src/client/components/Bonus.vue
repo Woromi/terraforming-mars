@@ -1,12 +1,12 @@
 <template>
   <div class='board-space-bonuses'>
-    <i v-for="(spaceBonus, idx) in bonus" :key="idx" :class="getClass(idx + 1, spaceBonus)" />
+    <i v-for="(spaceBonus, idx) in bonus" :key="idx" :class="getClass(idx + 1, spaceBonus)" ></i>
   </div>
 </template>
 
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import {SpaceBonus} from '@/common/boards/SpaceBonus';
 
 const css: Record<SpaceBonus, string> = {
@@ -23,26 +23,27 @@ const css: Record<SpaceBonus, string> = {
   [SpaceBonus.DATA]: 'data',
   [SpaceBonus.SCIENCE]: 'science',
   [SpaceBonus.ENERGY_PRODUCTION]: 'energy-production',
-  [SpaceBonus.TEMPERATURE]: 'bonustemperature',
+  [SpaceBonus._TEMPERATURE_3MC]: '', // Deprecated, migrated to TEMPERATURE_4MC.
   [SpaceBonus.ASTEROID]: 'asteroid',
   [SpaceBonus.DELEGATE]: 'delegate',
   [SpaceBonus.COLONY]: 'colony',
   [SpaceBonus._RESTRICTED]: '', // RESTRICTED is just a that a space is empty, not an actual bonus.
   [SpaceBonus.TEMPERATURE_4MC]: 'bonustemperature4mc',
+  [SpaceBonus.STANDARD_RESOURCE]: 'standard-resource',
 };
 
-export default Vue.extend({
-  name: 'bonus',
+export default defineComponent({
+  name: 'Bonus',
   props: {
     bonus: {
       type: Array as () => Array<SpaceBonus>,
+      required: true,
     },
   },
   methods: {
     getClass(idx: number, bonus: SpaceBonus): string {
       const doubleWideBonuses = [
         SpaceBonus.OCEAN,
-        SpaceBonus.TEMPERATURE,
         SpaceBonus.TEMPERATURE_4MC,
         SpaceBonus.COLONY,
       ];

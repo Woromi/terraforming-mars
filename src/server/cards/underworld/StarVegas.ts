@@ -9,6 +9,7 @@ import {PlaceCityTile} from '../../deferredActions/PlaceCityTile';
 import {Space} from '../../boards/Space';
 import {Resource} from '../../../common/Resource';
 import {all} from '../Options';
+import {Size} from '@/common/cards/render/Size';
 
 const SPACE_CITIES = [
   SpaceName.GANYMEDE_COLONY,
@@ -60,7 +61,7 @@ export class StarVegas extends Card {
         cardNumber: 'U053',
         renderData: CardRenderer.builder((b) => {
           b.city().asterix().corruption(2).br;
-          b.production((pb) => pb.megacredits(1).slash().city({all}));
+          b.production((pb) => pb.megacredits(1).slash().city({size: Size.SMALL, all}));
         }),
         description: 'Requires any 3 cities in play. Place a city on a space reserved for a different space city. ' +
         'Gain 2 corruption. Increase your M€ production one step for each city in play.',
@@ -92,7 +93,8 @@ export class StarVegas extends Card {
     game.defer(new PlaceCityTile(player, {spaces: this.eligibleSpaces(player)})).andThen((space) => {
       if (space !== undefined) {
         const id = space.id as SpaceCity;
-        game.log('${0} placed ${1} on ${2}', (b) => b.player(player).cardName(this.name).string(spaceCityNames[id] ?? 'unknown'));
+        const cardName = spaceCityNames[id];
+        game.log('${0} placed ${1} on ${2}', (b) => b.player(player).cardName(this.name).cardName(cardName));
         player.production.add(Resource.MEGACREDITS, (game.board.getCities()).length, {log: true});
         if (space.tile !== undefined) { // Should not happen
           space.tile.card = this.name;

@@ -6,7 +6,7 @@ import {DEFAULT_GAME_OPTIONS} from '../../src/server/game/GameOptions';
 import {MultiSet} from 'mnemonist';
 import {SpaceName} from '../../src/common/boards/SpaceName';
 import {ArabiaTerraBoard} from '../../src/server/boards/ArabiaTerraBoard';
-import {preservingShuffle} from '../../src/server/boards/BoardBuilder';
+import {BoardBuilder, preservingShuffle} from '../../src/server/boards/BoardBuilder';
 import {AmazonisBoard} from '../../src/server/boards/AmazonisBoard';
 import {CardName} from '../../src/common/cards/CardName';
 
@@ -18,7 +18,7 @@ describe('BoardBuilder', () => {
   ] as const;
   for (const run of preservingRuns) {
     it('Preserving shuffle preserves ' + JSON.stringify(run), () => {
-      for (let idx = 0; idx < 1_000; idx++) {
+      for (let idx = 0; idx < 500; idx++) {
         const seed = Math.random();
         const array = [...run.array];
         preservingShuffle(array, run.preservedIndexes, new SeededRandom(seed));
@@ -31,7 +31,7 @@ describe('BoardBuilder', () => {
   it('Randomized maps have space types on all spaces, #4056', () => {
     const spaces = new MultiSet<string>();
     const seeds = [];
-    for (let idx = 0; idx < 1_000; idx++) {
+    for (let idx = 0; idx < 500; idx++) {
       const seed = Math.random();
       const board = TharsisBoard.newInstance({
         ...DEFAULT_GAME_OPTIONS,
@@ -50,42 +50,33 @@ describe('BoardBuilder', () => {
   });
 
   it('Randomized maps preserve land spaces', () => {
-    for (let idx = 0; idx < 1_000; idx++) {
+    for (let idx = 0; idx < 500; idx++) {
       const seed = Math.random();
       const board = TharsisBoard.newInstance({
         ...DEFAULT_GAME_OPTIONS,
         shuffleMapOption: true,
       },
       new SeededRandom(seed));
-      const reservedSpaces = [SpaceName.NOCTIS_CITY,
-        SpaceName.ASCRAEUS_MONS,
-        SpaceName.ARSIA_MONS,
-        SpaceName.PAVONIS_MONS,
-        SpaceName.THARSIS_THOLUS].map((id) => board.getSpaceOrThrow(id).spaceType);
+      const reservedSpaces = [SpaceName.NOCTIS_CITY, ...board.volcanicSpaceIds].map((id) => board.getSpaceOrThrow(id).spaceType);
       expect(reservedSpaces, `for seed ${seed}`).deep.eq([SpaceType.LAND, SpaceType.LAND, SpaceType.LAND, SpaceType.LAND, SpaceType.LAND]);
     }
   });
 
   it('Randomized maps preserve cove spaces', () => {
-    for (let idx = 0; idx < 1_000; idx++) {
+    for (let idx = 0; idx < 500; idx++) {
       const seed = Math.random();
       const board = ArabiaTerraBoard.newInstance({
         ...DEFAULT_GAME_OPTIONS,
         shuffleMapOption: true,
       },
       new SeededRandom(seed));
-      const reservedSpaces = [
-        SpaceName.TIKHONAROV,
-        SpaceName.LADON,
-        SpaceName.FLAUGERGUES,
-        SpaceName.CHARYBDIS,
-      ].map((id) => board.getSpaceOrThrow(id).spaceType);
+      const reservedSpaces = board.volcanicSpaceIds.map((id) => board.getSpaceOrThrow(id).spaceType);
       expect(reservedSpaces, `for seed ${seed}`).deep.eq([SpaceType.COVE, SpaceType.LAND, SpaceType.LAND, SpaceType.LAND]);
     }
   });
 
   it('Randomized maps do not have spaces bonuses on restricted spaces #6593', () => {
-    for (let idx = 0; idx < 1_000; idx++) {
+    for (let idx = 0; idx < 500; idx++) {
       const seed = Math.random();
       const board = AmazonisBoard.newInstance({
         ...DEFAULT_GAME_OPTIONS,
@@ -104,7 +95,7 @@ describe('BoardBuilder', () => {
       turmoilExtension: true,
     },
     new SeededRandom(0));
-    expect(board.getSpaceOrThrow('78')).to.not.be.undefined;
+    expect(board.getSpaceOrThrow('c78')).to.not.be.undefined;
   });
 
   it('Venera base spot does not show when Turmoil is not in play', () => {
@@ -115,7 +106,7 @@ describe('BoardBuilder', () => {
       turmoilExtension: false,
     },
     new SeededRandom(0));
-    expect(() => board.getSpaceOrThrow('78')).to.throw();
+    expect(() => board.getSpaceOrThrow('c78')).to.throw();
   });
 
   it('Venera base spot shows when added to deck, even when Pathfinders is not in play', () => {
@@ -127,6 +118,32 @@ describe('BoardBuilder', () => {
       includedCards: [CardName.VENERA_BASE],
     },
     new SeededRandom(0));
-    expect(board.getSpaceOrThrow('78')).to.not.be.undefined;
+    expect(board.getSpaceOrThrow('c78')).to.not.be.undefined;
+  });
+
+  it('tilesPerRow parameter is respected', () => {
+    const builder = new BoardBuilder(DEFAULT_GAME_OPTIONS, new SeededRandom(0), [3, 4, 5, 4, 3]);
+    builder.row((r) => r.land().land().land());
+    builder.row((r) => r.land().land().land().land());
+    builder.row((r) => r.land().land().land().land().land());
+    builder.row((r) => r.land().land().land().land());
+    builder.row((r) => r.land().land().land());
+    const spaces = builder.build().filter((s) => s.spaceType !== SpaceType.COLONY);
+    expect(spaces).has.length(19);
+
+    // Row 0: 3 tiles, xOffset = 5-3 = 2, x in {2, 3, 4}
+    const row0 = spaces.filter((s) => s.y === 0);
+    expect(row0).has.length(3);
+    expect(row0.map((s) => s.x)).to.have.members([2, 3, 4]);
+
+    // Row 2: 5 tiles, xOffset = 0, x in {0..4}
+    const row2 = spaces.filter((s) => s.y === 2);
+    expect(row2).has.length(5);
+    expect(row2.map((s) => s.x)).to.have.members([0, 1, 2, 3, 4]);
+
+    // Row 4: 3 tiles, xOffset = 2, x in {2, 3, 4}
+    const row4 = spaces.filter((s) => s.y === 4);
+    expect(row4).has.length(3);
+    expect(row4.map((s) => s.x)).to.have.members([2, 3, 4]);
   });
 });

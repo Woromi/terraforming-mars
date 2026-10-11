@@ -7,6 +7,10 @@ import {Turmoil} from '../../turmoil/Turmoil';
 import {ChooseAlliedParty} from '../../../server/deferredActions/ChooseAlliedParty';
 import {ICorporationCard} from '../corporation/ICorporationCard';
 
+const HELP_TEXT = `
+This card allows the player to use a party's passive effects. Kelvinists and Scientists have _active_ effects. That is why they are not available as options.
+` as const;
+
 export class MarsFrontierAlliance extends CorporationCard implements ICorporationCard {
   constructor() {
     super({
@@ -16,7 +20,6 @@ export class MarsFrontierAlliance extends CorporationCard implements ICorporatio
 
       metadata: {
         cardNumber: 'PfC20',
-        hasExternalHelp: true,
         description:
           'You start with 40 M€. When you reveal this card, select any remaining political program tile (you may use its effect as a passive effect of your corporation or as ruling party this generation).',
         renderData: CardRenderer.builder((b) => {
@@ -28,6 +31,7 @@ export class MarsFrontierAlliance extends CorporationCard implements ICorporatio
             },
           ).br;
         }),
+        helpText: HELP_TEXT,
       },
     });
   }

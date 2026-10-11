@@ -1,39 +1,38 @@
 <template>
   <div class="resource_items_cont">
-    <player-resource
+    <PlayerResource
       :type="Resource.MEGACREDITS"
-      :count="player.megaCredits"
-      :production="player.megaCreditProduction"
+      :count="player.megacredits"
+      :production="player.megacreditProduction"
       :resourceProtection="player.protectedResources.megacredits"
       :productionProtection="player.protectedProduction.megacredits"/>
-    <player-resource
+    <PlayerResource
       :type="Resource.STEEL"
       :count="player.steel"
       :production="player.steelProduction"
       :value="player.steelValue"
       :resourceProtection="player.protectedResources.steel"
       :productionProtection="player.protectedProduction.steel"/>
-    <!-- TODO LUNA TRADE FEDERATION -->
-    <player-resource
+    <PlayerResource
       :type="Resource.TITANIUM"
       :count="player.titanium"
       :production="player.titaniumProduction"
       :value="player.titaniumValue"
       :resourceProtection="player.protectedResources.titanium"
       :productionProtection="player.protectedProduction.titanium"/>
-    <player-resource
+    <PlayerResource
       :type="Resource.PLANTS"
       :count="player.plants"
       :production="player.plantProduction"
       :resourceProtection="player.protectedResources.plants"
       :productionProtection="player.protectedProduction.plants"/>
-    <player-resource
+    <PlayerResource
       :type="Resource.ENERGY"
       :count="player.energy"
       :production="player.energyProduction"
       :resourceProtection="player.protectedResources.energy"
       :productionProtection="player.protectedProduction.energy"/>
-    <player-resource
+    <PlayerResource
       :type="Resource.HEAT"
       :count="player.heat"
       :production="player.heatProduction"
@@ -44,30 +43,30 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import {CardName} from '@/common/cards/CardName';
 import {PublicPlayerModel} from '@/common/models/PlayerModel';
 import PlayerResource from '@/client/components/overview/PlayerResource.vue';
 import {Resource} from '@/common/Resource';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'PlayerResources',
   props: {
     player: {
       type: Object as () => PublicPlayerModel,
+      required: true,
     },
   },
   computed: {
     Resource(): typeof Resource {
       return Resource;
     },
-    // TODO LUNA TRADE FEDERATION
     canUseHeatAsMegaCredits(): boolean {
       return this.player.tableau.some((card) => card.name === CardName.HELION);
     },
   },
   components: {
-    'player-resource': PlayerResource,
+    PlayerResource,
   },
 });
 </script>

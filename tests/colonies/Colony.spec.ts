@@ -9,8 +9,9 @@ import {AndOptions} from '../../src/server/inputs/AndOptions';
 import {SelectColony} from '../../src/server/inputs/SelectColony';
 import {SelectCard} from '../../src/server/inputs/SelectCard';
 import {IProjectCard} from '../../src/server/cards/IProjectCard';
+import {isIStandardProjectCard} from '../../src/server/cards/IStandardProjectCard';
 import {MAX_COLONY_TRACK_POSITION} from '../../src/common/constants';
-import {cast, formatMessage, runAllActions, setRulingParty} from '../TestingUtils';
+import {formatMessage, runAllActions, setRulingParty} from '../TestingUtils';
 import {TestPlayer} from '../TestPlayer';
 import {CardName} from '../../src/common/cards/CardName';
 import {Pallas} from '../../src/server/cards/community/Pallas';
@@ -23,11 +24,15 @@ import {Venus} from '../../src/server/cards/community/Venus';
 import {PartyName} from '../../src/common/turmoil/PartyName';
 import {L1TradeTerminal} from '../../src/server/cards/prelude2/L1TradeTerminal';
 import {Mercury} from '../../src/server/cards/community/Mercury';
+import {cast} from '@/common/utils/utils';
 
 function isBuildColonyStandardProjectAvailable(player: TestPlayer) {
-  const options = cast(player.getStandardProjectOption(), SelectCard);
-  const colonyOptionIdx = options.cards.findIndex((card) => card.name === CardName.BUILD_COLONY_STANDARD_PROJECT);
-  return options.config.enabled![colonyOptionIdx];
+  const options = player.getStandardProjectOption();
+  const card = options.cards.find((card) => card.name === CardName.BUILD_COLONY_STANDARD_PROJECT);
+  if (card === undefined) {
+    return false;
+  }
+  return isIStandardProjectCard(card) ? card.canAct(player) : false;
 }
 
 function isTradeWithColonyActionAvailable(player: IPlayer) {
@@ -158,17 +163,23 @@ describe('Colony', () => {
     expect(luna.trackPosition).to.eq(0);
   });
 
-  it('Should trade', () => {
-    // TODO (Lynesth): Do this better with next colony refactor PR
-    const income = [1, 2, 4, 7, 10, 13, 17];
-    for (let i = 0; i <= MAX_COLONY_TRACK_POSITION; i++) {
+  for (const run of [
+    {position: 0, expected: 1},
+    {position: 1, expected: 2},
+    {position: 2, expected: 4},
+    {position: 3, expected: 7},
+    {position: 4, expected: 10},
+    {position: 5, expected: 13},
+    {position: 6, expected: 17},
+  ] as const) {
+    it('Should trade ' + JSON.stringify(run), () => {
       player.megaCredits = 0;
-      luna.trackPosition = i;
+      luna.trackPosition = run.position;
       luna.trade(player);
       runAllActions(game);
-      expect(player.megaCredits).to.eq(income[i]);
-    }
-  });
+      expect(player.megaCredits).to.eq(run.expected);
+    });
+  }
 
   it('Should give trade bonus to players with colonies only', () => {
     // No colonies

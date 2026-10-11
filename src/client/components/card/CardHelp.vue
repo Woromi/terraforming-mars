@@ -1,32 +1,58 @@
 <template>
-  <div class="card-help" @click="click"><a :href="url" target="_blank">?</a></div>
+  <div class="card-help-icon" v-show="hovering" @click.stop="open"><a>?</a></div>
+  <Teleport to="body">
+    <PopupPanel v-if="showPopup" @close="close">
+      <template #header>
+        <h2>{{ name }}</h2>
+      </template>
+      <div class="card-help-text" v-html="renderedHelpText"></div>
+    </PopupPanel>
+  </Teleport>
 </template>
 
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import {CardName} from '@/common/cards/CardName';
+import PopupPanel from '@/client/components/common/PopupPanel.vue';
+import {renderMarkdown} from '@/client/markdown/markdown';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'CardHelp',
+  components: {
+    PopupPanel,
+  },
   props: {
     name: {
       type: String as () => CardName,
+      required: true,
+    },
+    helpText: {
+      type: String,
+      required: true,
+    },
+    hovering: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      showPopup: false,
+    };
+  },
+  computed: {
+    renderedHelpText(): string {
+      return renderMarkdown(this.helpText);
     },
   },
   methods: {
-    getClasses(): string {
-      const classes = ['card-help'];
-      return classes.join(' ');
+    open() {
+      this.showPopup = true;
     },
-    click() {
-      window.open(this.url, '_blank');
-    },
-  },
-  computed: {
-    url(): string {
-      const anchor = this.name.toLowerCase().replaceAll(' ', '-');
-      return 'https://github.com/terraforming-mars/terraforming-mars/wiki/Card-Details#' + anchor;
+    close() {
+      this.showPopup = false;
     },
   },
 });

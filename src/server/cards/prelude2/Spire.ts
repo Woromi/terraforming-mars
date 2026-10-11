@@ -22,7 +22,7 @@ export class Spire extends CorporationCard implements ICorporationCard {
       metadata: {
         cardNumber: 'PC05', // Renumber
         renderData: CardRenderer.builder((b) => {
-          b.megacredits(50).plus().cards(4, {digit}).minus().cards(3, {digit}).br,
+          b.megacredits(50).plus().cards(4, {digit}).cards(-3, {digit}).br;
           b.plainText('You start with 50 M€. As your first action, draw 4 cards, ' +
               'then discard 3 cards from your hand.').br;
 
@@ -46,7 +46,7 @@ export class Spire extends CorporationCard implements ICorporationCard {
       });
   }
 
-  public onCardPlayedForCorps(player: IPlayer, card: ICard) {
+  public onCardPlayed(player: IPlayer, card: ICard) {
     const count = card.tags.length + (card.type === CardType.EVENT ? 1 : 0);
     if (count >= 2) {
       player.addResourceTo(this, {qty: 1, log: true});

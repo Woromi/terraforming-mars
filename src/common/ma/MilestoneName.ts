@@ -46,8 +46,13 @@ export const milestoneNames = [
   'T. Collector',
   'Firestarter',
   'Terra Pioneer',
-  'Spacefarer', // TODO(kberg): Rename to T. Spacefarer
+  'T. Spacefarer',
   'Gambler',
+
+  // Terra Cimmeria Nova
+  'Architect',
+  'Coastguard', // Also Modular
+  'C. Forester',
 
   // Vastitas Borealis
   'V. Electrician',
@@ -56,12 +61,12 @@ export const milestoneNames = [
   'Irrigator',
   'Capitalist',
 
-  // Vastitas Borealis Novus
+  // Vastitas Borealis Nova
   'Agronomist',
   'Engineer',
   'V. Spacefarer',
   'Geologist',
-  'Farmer',
+  'Farmer', // And modular
 
   // Underworld
   'Tunneler',
@@ -71,31 +76,30 @@ export const milestoneNames = [
   'Purifier',
 
   // Modular
-  // 'Briber',
-  // 'Builder', // But 7 building tags
-  // 'Coastguard', // NEW 3 tiles adjacent to oceans
-  // 'Farmer',
+  'Briber',
+  'Builder7',
   'Forester',
   'Fundraiser',
   'Hydrologist',
   'Landshaper',
-  // 'Legend', // But 4 events
+  'Legend4',
   'Lobbyist',
-  // 'Merchant',
-  // 'Metallurgist', // Smith, but 6
+  'Merchant',
+  'Merchant3',
+  'Metallurgist', // Same as Smith
   'Philantropist',
-  // 'Pioneer', // But 4 colonies
+  'Pioneer4',
   'Planetologist',
   'Producer',
   'Researcher',
-  // 'Spacefarer', // But 4 space tags
+  'Spacefarer4',
   'Sponsor',
-  // 'Tactician', // but 4 cards with requirements
-  // 'Terraformer', // but 29 TR
-  // 'Terran', // But 5 Earth tags.
+  'Tactician4',
+  'Terraformer29',
+  'Terran5',
   'Thawer',
-  // 'Trader', // NEW 3 types of resources on cards.
-  // 'Tycoon', // But, 10 Green and Blue cards combined.
+  'Trader',
+  'Tycoon10',
 ] as const;
 
 export type MilestoneName = typeof milestoneNames[number];
@@ -104,8 +108,11 @@ const MILESTONE_RENAMES = new Map<string, MilestoneName>([
   // When renaming an award add the old name here (like the example below), and add a TODO (like the example below)
   // And remember to add a test in spec.ts.
 
-  // TODO(yournamehere): remove after 2021-04-05
+  // TODO(yournamehere): remove after YYYY-MM-DD
   // ['Electrician', 'V. Electrician'],
+
+  // TODO(kberg): remove after 2026-12-01
+  ['Spacefarer', 'T. Spacefarer'],
 ]);
 
 export function maybeRenamedMilestone(name: string): MilestoneName {

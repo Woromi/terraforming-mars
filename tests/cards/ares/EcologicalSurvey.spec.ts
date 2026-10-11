@@ -9,13 +9,14 @@ import {SpaceBonus} from '../../../src/common/boards/SpaceBonus';
 import {ArcticAlgae} from '../../../src/server/cards/base/ArcticAlgae';
 import {SpaceType} from '../../../src/common/boards/SpaceType';
 import {Phase} from '../../../src/common/Phase';
-import {addGreenery, cast, forceGenerationEnd, maxOutOceans, runAllActions, setOxygenLevel, setTemperature} from '../../TestingUtils';
+import {addGreenery, forceGenerationEnd, maxOutOceans, runAllActions, setOxygenLevel, setTemperature} from '../../TestingUtils';
 import {TestPlayer} from '../../TestPlayer';
 import {OceanCity} from '../../../src/server/cards/ares/OceanCity';
 import {SelectSpace} from '../../../src/server/inputs/SelectSpace';
 import {testGame} from '../../TestGame';
 import {MAX_OXYGEN_LEVEL, MAX_TEMPERATURE} from '../../../src/common/constants';
 import {OrOptions} from '../../../src/server/inputs/OrOptions';
+import {cast} from '../../../src/common/utils/utils';
 
 describe('EcologicalSurvey', () => {
   let card: EcologicalSurvey;
@@ -110,7 +111,7 @@ describe('EcologicalSurvey', () => {
       SpaceBonus.PLANT,
       SpaceBonus.DRAW_CARD,
       SpaceBonus.HEAT,
-    ],
+    ];
     player.playedCards.push(card);
     game.addTile(player, space, {tileType: TileType.RESTRICTED_AREA});
 
@@ -177,7 +178,7 @@ describe('EcologicalSurvey', () => {
     player.playedCards.push(card, microbeCard);
 
     const space = game.board.getAvailableSpacesOnLand(player)[0];
-    space.bonus = [SpaceBonus.MICROBE],
+    space.bonus = [SpaceBonus.MICROBE];
 
     game.addTile(player, space, {tileType: TileType.RESTRICTED_AREA});
     runAllActions(game);

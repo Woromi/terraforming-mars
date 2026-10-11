@@ -3,9 +3,9 @@ import {IPlayer} from '../../IPlayer';
 import {PreludeCard} from '../prelude/PreludeCard';
 import {IProjectCard} from '../IProjectCard';
 import {CardName} from '../../../common/cards/CardName';
-import {Turmoil} from '../../turmoil/Turmoil';
 import {ChooseRulingPartyDeferred} from '../../turmoil/ChooseRulingPartyDeferred';
 import {CardRenderer} from '../render/CardRenderer';
+import {Turmoil} from '@/server/turmoil/Turmoil';
 
 export class ByElection extends PreludeCard implements IProjectCard {
   constructor() {
@@ -17,16 +17,18 @@ export class ByElection extends PreludeCard implements IProjectCard {
         cardNumber: 'Y02',
         renderData: CardRenderer.builder((b) => {
           b.rulingParty().plus().influence();
+          b.br;
+          b.plainText('Set the ruling party to one of your choice. Gain 1 influence.');
+          b.br;
+          b.plainText('After being played, when you perform an action, the wild tag counts as any tag of your choice.');
         }),
-        description: 'Set the ruling party to one of your choice. Gain 1 influence.',
       },
     });
   }
   public override bespokePlay(player: IPlayer) {
-    Turmoil.ifTurmoil((player.game), (turmoil) => {
-      turmoil.addInfluenceBonus(player);
-      player.game.defer(new ChooseRulingPartyDeferred(player, turmoil));
-    });
+    const turmoil = Turmoil.getTurmoil(player.game);
+    turmoil.addInfluenceBonus(player);
+    player.game.defer(new ChooseRulingPartyDeferred(player));
 
     return undefined;
   }

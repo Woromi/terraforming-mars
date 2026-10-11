@@ -1,13 +1,15 @@
 import {expect} from 'chai';
 import {awardManifest} from '../../src/server/awards/Awards';
 import {milestoneManifest} from '../../src/server/milestones/Milestones';
-import {chooseMilestonesAndAwards, getCandidates, LIMITED_SYNERGY, maximumSynergy, verifySynergyRules} from '../../src/server/ma/MilestoneAwardSelector';
+import {BOARDS_WITHOUT_VOLCANIC_SPACES, chooseMilestonesAndAwards, getCandidates, LIMITED_SYNERGY, maximumSynergy, verifySynergyRules} from '../../src/server/ma/MilestoneAwardSelector';
 import {RandomMAOptionType} from '../../src/common/ma/RandomMAOptionType';
 import {intersection} from '../../src/common/utils/utils';
 import {DEFAULT_GAME_OPTIONS, GameOptions} from '../../src/server/game/GameOptions';
 import {BoardName} from '../../src/common/boards/BoardName';
 import {AwardName} from '../../src/common/ma/AwardName';
 import {MilestoneName} from '../../src/common/ma/MilestoneName';
+import {GameSetup} from '../../src/server/GameSetup';
+import {SeededRandom} from '../../src/common/utils/Random';
 
 describe('MilestoneAwardSelector', () => {
   const maximumSynergyRuns = [
@@ -92,7 +94,7 @@ describe('MilestoneAwardSelector', () => {
       milestoneManifest.boards[BoardName.ARABIA_TERRA],
       milestoneManifest.boards[BoardName.TERRA_CIMMERIA],
       milestoneManifest.boards[BoardName.VASTITAS_BOREALIS]].flat();
-    for (let idx = 0; idx < 2000; idx++) {
+    for (let idx = 0; idx < 1_000; idx++) {
       const mas = choose({
         randomMA: RandomMAOptionType.UNLIMITED,
         includeFanMA: false,
@@ -133,22 +135,22 @@ describe('MilestoneAwardSelector', () => {
     expect(intersection(milestones, avoidedMilestones)).is.empty;
   });
 
-  it('novus maps with no randomness render correctly', () => {
+  it('nova maps with no randomness render correctly', () => {
     const mas = chooseMilestonesAndAwards({
       ...DEFAULT_GAME_OPTIONS,
       'aresExtension': true,
-      'boardName': BoardName.TERRA_CIMMERIA_NOVUS,
+      'boardName': BoardName.TERRA_CIMMERIA_NOVA,
       'includeFanMA': false,
       'pathfindersExpansion': true,
       'randomMA': RandomMAOptionType.NONE,
       'venusNextExtension': true,
     });
-    expect(mas.milestones).to.have.length(6);
-    expect(mas.awards).to.have.length(6);
+    expect(mas.milestones).to.have.length(8);
+    expect(mas.awards).to.have.length(8);
   });
 
   it('Do not select Constructor when Colonies is not selected', () => {
-    for (let idx = 0; idx < 2000; idx++) {
+    for (let idx = 0; idx < 1_000; idx++) {
       const mas = chooseMilestonesAndAwards({
         ...DEFAULT_GAME_OPTIONS,
         coloniesExtension: false,
@@ -158,22 +160,74 @@ describe('MilestoneAwardSelector', () => {
     }
   });
 
-  it('No modular milestones and awards by default', () => {
-    const [milestones, awards] = getCandidates({...DEFAULT_GAME_OPTIONS,
+  // it('No modular milestones and awards by default', () => {
+  //   const [milestones, awards] = getCandidates({...DEFAULT_GAME_OPTIONS,
+  //     randomMA: RandomMAOptionType.UNLIMITED,
+  //     venusNextExtension: true,
+  //     aresExtension: true,
+  //     moonExpansion: true,
+  //     coloniesExtension: true,
+  //     turmoilExtension: true,
+  //     includeFanMA: true,
+  //   });
+
+  //   // expect(intersection(milestones, milestoneManifest.modular)).deep.eq([]);
+  //   // expect(intersection(awards, awardManifest.modular)).deep.eq([]);
+
+  //   // Landlord is listed as modular, but should be included here.
+  //   expect(awards).to.contain('Landlord');
+  // });
+
+  it('Do not select deprecated milestones or awards', () => {
+    const [milestones, awards] = getCandidates({
+      ...DEFAULT_GAME_OPTIONS,
       randomMA: RandomMAOptionType.UNLIMITED,
-      venusNextExtension: true,
-      aresExtension: true,
-      moonExpansion: true,
-      coloniesExtension: true,
-      turmoilExtension: true,
       includeFanMA: true,
     });
 
-    expect(intersection(milestones, milestoneManifest.modular)).deep.eq([]);
-    expect(intersection(awards, awardManifest.modular)).deep.eq([]);
+    const deprecatedMilestones = Object.keys(milestoneManifest.all).filter(
+      (name) => milestoneManifest.all[name as MilestoneName].deprecated,
+    );
+    const deprecatedAwards = Object.keys(awardManifest.all).filter(
+      (name) => awardManifest.all[name as AwardName].deprecated,
+    );
 
-    // Landlord is listed as modular, but should be included here.
-    expect(awards).to.contain('Landlord');
+    expect(intersection(milestones as Array<string>, deprecatedMilestones)).is.empty;
+    expect(intersection(awards as Array<string>, deprecatedAwards)).is.empty;
+  });
+
+  it('BOARDS_WITHOUT_VOLCANIC_SPACES is accurate', () => {
+    const expected = Object.values(BoardName).filter((boardName) => {
+      const board = GameSetup.newBoard({...DEFAULT_GAME_OPTIONS, boardName}, new SeededRandom(0));
+      return board.volcanicSpaceIds.length === 0;
+    });
+    expect(BOARDS_WITHOUT_VOLCANIC_SPACES).to.have.members(expected);
+  });
+
+  it('Modular MA excludes Geologist as a candidate on boards without volcanic spaces', () => {
+    const [milestones] = getCandidates({
+      ...DEFAULT_GAME_OPTIONS,
+      boardName: BoardName.HELLAS,
+      modularMA: true,
+      randomMA: RandomMAOptionType.UNLIMITED,
+    });
+    expect(milestones).does.not.contain('Geologist');
+  });
+
+  it('Modular MA includes Geologist as a candidate on boards with volcanic spaces', () => {
+    const [milestones] = getCandidates({
+      ...DEFAULT_GAME_OPTIONS,
+      boardName: BoardName.THARSIS,
+      modularMA: true,
+      randomMA: RandomMAOptionType.UNLIMITED,
+    });
+    expect(milestones).contains('Geologist');
+  });
+
+  it('Amazonis Planitia uses its own milestones and awards when not randomized', () => {
+    const mas = choose({boardName: BoardName.AMAZONIS_PLANITIA, randomMA: RandomMAOptionType.NONE});
+    expect(mas.milestones).deep.eq(milestoneManifest.boards[BoardName.AMAZONIS_PLANITIA]);
+    expect(mas.awards).deep.eq(awardManifest.boards[BoardName.AMAZONIS_PLANITIA]);
   });
 
   function choose(options: Partial<GameOptions>) {

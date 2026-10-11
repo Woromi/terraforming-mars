@@ -6,7 +6,6 @@ import {CardRenderer} from '../render/CardRenderer';
 import {Card} from '../Card';
 import {AltSecondaryTag} from '../../../common/cards/render/AltSecondaryTag';
 
-// TODO(kberg): Add a test for how this card operates with Reds. It will be a good verification.
 export class ThoriumRush extends Card implements IProjectCard {
   constructor() {
     super({
@@ -30,7 +29,7 @@ export class ThoriumRush extends Card implements IProjectCard {
         renderData: CardRenderer.builder((b) => {
           b.moonHabitat({secondaryTag: AltSecondaryTag.MOON_HABITAT_RATE})
             .moonMine({secondaryTag: AltSecondaryTag.MOON_MINING_RATE})
-            .moonRoad({secondaryTag: AltSecondaryTag.MOON_LOGISTICS_RATE});
+            .moonRoad({secondaryTag: AltSecondaryTag.MOON_LOGISTIC_RATE});
         }),
       },
     });

@@ -6,12 +6,13 @@ import {CardName} from '../../../common/cards/CardName';
 import {CardRenderer} from '../render/CardRenderer';
 import {all, digit} from '../Options';
 import {Space} from '../../boards/Space';
-import {GainResources} from '../../deferredActions/GainResources';
-import {Priority} from '../../deferredActions/Priority';
+import {GainResourcesDeferred} from '../../deferredActions/GainResourcesDeferred';
 import {Size} from '../../../common/cards/render/Size';
 import {Board} from '../../boards/Board';
 import {Phase} from '../../../common/Phase';
 import {ICorporationCard} from '../corporation/ICorporationCard';
+import {TileType} from '../../../common/TileType';
+import {Units} from '../../../common/Units';
 
 export class Polaris extends CorporationCard implements ICorporationCard {
   constructor() {
@@ -43,16 +44,24 @@ export class Polaris extends CorporationCard implements ICorporationCard {
     });
   }
 
+  public gainsFromTilePlacement(player: IPlayer, _space: Space, tileType: TileType) {
+    if (tileType !== TileType.OCEAN) {
+      return {stock: Units.EMPTY, production: Units.EMPTY};
+    }
+    return {
+      stock: Units.of({megacredits: player.game.phase !== Phase.SOLAR ? 4 : 0}),
+      production: Units.of({megacredits: 1}),
+    };
+  }
+
   public onTilePlaced(cardOwner: IPlayer, activePlayer: IPlayer, space: Space) {
     if (Board.isUncoveredOceanSpace(space)) {
       cardOwner.production.add(Resource.MEGACREDITS, 1, {log: true, from: {card: this}});
       if (activePlayer.id === cardOwner.id && cardOwner.game.phase !== Phase.SOLAR) {
         cardOwner.game.defer(
-          new GainResources(cardOwner, Resource.MEGACREDITS, {
+          new GainResourcesDeferred(cardOwner, Resource.MEGACREDITS, {
             count: 4, log: true, from: {card: this},
-          }),
-          cardOwner.id !== activePlayer.id ? Priority.OPPONENT_TRIGGER : undefined,
-        );
+          }));
       }
     }
   }

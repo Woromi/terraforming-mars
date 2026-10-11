@@ -18,24 +18,23 @@ export class RoverDriversUnion extends Card implements IProjectCard {
       requirements: {logisticRate: 2},
 
       behavior: {
-        moon: {logisticsRate: 1},
+        moon: {logisticRate: 1},
       },
 
       metadata: {
         description: 'Requires 2 logistic rate. Raise the logistic rate 1 step. Increase your M€ production 1 step per logistic rate.',
         cardNumber: 'M78',
         renderData: CardRenderer.builder((b) => {
-          b.moonLogisticsRate().br;
-          b.production((pb) => pb.megacredits(1)).slash().moonLogisticsRate();
+          b.moonLogisticRate().br;
+          b.production((pb) => pb.megacredits(1)).slash().moonLogisticRate();
         }),
       },
     });
   }
 
   public override bespokePlay(player: IPlayer) {
-    MoonExpansion.ifMoon(player.game, (moonData) => {
-      player.production.add(Resource.MEGACREDITS, moonData.logisticRate, {log: true});
-    });
+    const moonData = MoonExpansion.getMoonData(player.game);
+    player.production.add(Resource.MEGACREDITS, moonData.logisticRate, {log: true});
     return undefined;
   }
 }

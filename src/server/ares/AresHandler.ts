@@ -6,10 +6,9 @@ import {IPlayer} from '../IPlayer';
 import {CardResource} from '../../common/CardResource';
 import {SpaceBonus} from '../../common/boards/SpaceBonus';
 import {HAZARD_STEPS, HazardSeverity, hazardSeverity} from '../../common/AresTileType';
-import {OCEAN_UPGRADE_TILES, TileType, tileTypeToString} from '../../common/TileType';
-import {Tile} from '../Tile';
+import {TileType, tileTypeToString} from '../../common/TileType';
 import {AresData, MilestoneCount} from '../../common/ares/AresData';
-import {AdjacencyCost} from './AdjacencyCost';
+import {AdjacencyCost, AresProductionCost, EMPTY_ARES_PRODUCTION_COST} from './AdjacencyCost';
 import {MultiSet} from 'mnemonist';
 import {Phase} from '../../common/Phase';
 import {SelectPaymentDeferred} from '../deferredActions/SelectPaymentDeferred';
@@ -17,13 +16,19 @@ import {SelectProductionToLoseDeferred} from '../deferredActions/SelectProductio
 import {AresHazards} from './AresHazards';
 import {CrashlandingBonus} from '../pathfinders/CrashlandingBonus';
 import {Board} from '../boards/Board';
+import {PartyHooks} from '../turmoil/parties/PartyHooks';
+import {message} from '../logs/MessageBuilder';
+import {Units} from '../../common/Units';
+import {PRODUCTION_MINIMUMS} from '../../common/constants';
 
 export class AresHandler {
   private constructor() {}
 
   public static ifAres(game: IGame, cb: (aresData: AresData) => void) {
     if (game.gameOptions.aresExtension) {
-      if (game.aresData === undefined) throw new Error('Assertion failure: game.aresData is undefined');
+      if (game.aresData === undefined) {
+        throw new Error('Assertion failure: game.aresData is undefined');
+      }
       cb(game.aresData);
     }
   }
@@ -42,7 +47,7 @@ export class AresHandler {
     }
     const adjacentPlayer = adjacentSpace.player;
     if (adjacentPlayer === undefined) {
-      throw new Error(`A tile with an adjacency bonus must have an owner (${adjacentSpace.x}, ${adjacentSpace.y}, ${adjacentSpace.adjacency.bonus}`);
+      throw new Error(`A tile with an adjacency bonus must have an owner (${adjacentSpace.id} ${adjacentSpace.adjacency.bonus}`);
     }
 
     const addResourceToCard = function(player: IPlayer, resourceType: CardResource, resourceAsText: string) {
@@ -154,84 +159,102 @@ export class AresHandler {
     return hazardSeverity(space.tile?.tileType) !== 'none';
   }
 
-  private static computeAdjacencyCosts(player: IPlayer, space: Space, subjectToHazardAdjacency: boolean): AdjacencyCost {
+  public static computePlacementCosts(player: IPlayer, board: Board, space: Space, subjectToHazardAdjacency: boolean): AdjacencyCost {
     if (player.tableau.has(CardName.ATHENA)) {
       subjectToHazardAdjacency = false;
     }
 
-    const game = player.game;
-    // Summing up production cost isn't really the way to do it, because each tile could
-    // reduce different production costs. Oh well.
     let megaCreditCost = 0;
-    let productionCost = 0;
-    game.board.getAdjacentSpaces(space).forEach((adjacentSpace) => {
+    const productionCost: AresProductionCost = {...EMPTY_ARES_PRODUCTION_COST};
+    board.getAdjacentSpaces(space).forEach((adjacentSpace) => {
       megaCreditCost += adjacentSpace.adjacency?.cost || 0;
+      // TODO(kberg): offset costs with heat and MC bonuses.
+      // for (const bonus of adjacency.bonus) {
+      //   case (bonus) {
+      //     switch SpaceBonus.MEGACREDITS:
+      //       costs.stock.megacredits--;
+      //     switch SpaceBonus.MEGACREDITS:
+      //       costs.stock.megacredits--;
+      //   }
+      // }
       if (subjectToHazardAdjacency === true) {
         const severity = hazardSeverity(adjacentSpace.tile?.tileType);
-        productionCost += HAZARD_STEPS[severity];
+        if (severity !== 'none') {
+          productionCost[severity]++;
+        }
       }
     });
 
     const severity = hazardSeverity(space.tile?.tileType);
     megaCreditCost += HAZARD_STEPS[severity] * 8;
+    const tr = HAZARD_STEPS[severity];
 
-    return {megacredits: megaCreditCost, production: productionCost};
+    return {megacredits: megaCreditCost, production: productionCost, tr};
   }
 
   public static assertCanPay(player: IPlayer, space: Space, subjectToHazardAdjacency: boolean): AdjacencyCost {
     if (player.game.phase === Phase.SOLAR) {
-      return {megacredits: 0, production: 0};
+      return {megacredits: 0, production: EMPTY_ARES_PRODUCTION_COST, tr: 0};
     }
-    const cost = AresHandler.computeAdjacencyCosts(player, space, subjectToHazardAdjacency);
+    const cost = AresHandler.computePlacementCosts(player, player.game.board, space, subjectToHazardAdjacency);
 
-    // Make this more sophisticated, a player can pay for different adjacencies
-    // with different production units, and, a severe hazard can't split payments.
-    const availableProductionUnits = (player.production.megacredits + 5) +
-            player.production.steel +
-            player.production.titanium +
-            player.production.plants +
-            player.production.energy +
-            player.production.heat;
-
-    if (availableProductionUnits >= cost.production && player.canAfford(cost.megacredits)) {
+    if (AresHandler.canPayProduction(player, cost.production) && player.canAfford({cost: cost.megacredits, tr: {tr: cost.tr}})) {
       return cost;
     }
-    if (cost.production > 0) {
-      throw new Error(`Placing here costs ${cost.production} units of production and ${cost.megacredits} M€`);
+    const messages = [];
+    const totalProduction = cost.production.mild * HAZARD_STEPS.mild + cost.production.severe * HAZARD_STEPS.severe;
+    if (totalProduction > 0) {
+      messages.push(`${totalProduction} units of production`);
     }
     if (cost.megacredits > 0) {
-      throw new Error(`Placing here costs ${cost.megacredits} M€`);
+      messages.push(`${cost.megacredits} M€`);
     }
-    return cost;
+    if (cost.tr > 0 && PartyHooks.reds01PolicyInEffect(player)) {
+      messages.push(`additional M€ for ${cost.tr} TR`);
+    }
+    throw new Error(`Placing here costs ${messages.join(', ')}`);
+  }
+
+  // Each hazard's production loss must come from a single production type.
+  public static canPayProduction(player: IPlayer, costs: AresProductionCost): boolean {
+    // Short circuit most of the time
+    if (costs.mild === 0 && costs.severe === 0) {
+      return true;
+    }
+    // Count how many 2-step and 1-step losses the player's production can cover.
+    let twoStepLosses = 0;
+    let oneStepLosses = 0;
+    for (const resource of Units.keys) {
+      const units = player.production.get(resource) - PRODUCTION_MINIMUMS[resource];
+      twoStepLosses += Math.floor(units / 2);
+      oneStepLosses += units % 2;
+    }
+
+    // Each severe hazard needs 2 steps from a single production.
+    if (twoStepLosses < costs.severe) {
+      return false;
+    }
+    // Pairs not used on severe hazards can pay for mild hazards.
+    oneStepLosses += 2 * (twoStepLosses - costs.severe);
+    return oneStepLosses >= costs.mild;
   }
 
   public static payAdjacencyAndHazardCosts(player: IPlayer, space: Space, subjectToHazardAdjacency: boolean) {
     const cost = this.assertCanPay(player, space, subjectToHazardAdjacency);
 
-    if (cost.production > 0) {
-      // TODO(kberg): don't send interrupt if total is available.
-      player.game.defer(new SelectProductionToLoseDeferred(player, cost.production));
+    const steps = cost.production.severe * HAZARD_STEPS.severe + cost.production.mild * HAZARD_STEPS.mild;
+    if (steps > 0) {
+      const title = message('Choose ${0} units of production to lose from ${1} mild and ${2} severe hazards',
+        (b) => b.number(steps).number(cost.production.mild).number(cost.production.severe));
+      const warning = cost.production.severe > 0 ?
+        'Placing next to severe hazards requires losing 2 units of the same production.' :
+        undefined;
+      player.game.defer(new SelectProductionToLoseDeferred(player, steps, title, cost.production.severe, warning));
     }
     if (cost.megacredits > 0) {
       player.game.log('${0} placing a tile here costs ${1} M€', (b) => b.player(player).number(cost.megacredits));
       player.game.defer(new SelectPaymentDeferred(player, cost.megacredits, {title: 'Select how to pay additional placement costs.'}));
     }
-  }
-
-  // Returns true if |newTile| can cover |boardTile|.
-  public static canCover(space: Space, newTile: Tile): boolean {
-    if (space.tile === undefined) {
-      return true;
-    }
-
-    // A hazard protected by the Desperate Measures action can't be covered.
-    if (AresHandler.hasHazardTile(space) && space.tile.protectedHazard !== true) {
-      return true;
-    }
-    if (space.tile.tileType === TileType.OCEAN && OCEAN_UPGRADE_TILES.has(newTile.tileType)) {
-      return true;
-    }
-    return false;
   }
 
   public static onTemperatureChange(game: IGame, aresData: AresData) {

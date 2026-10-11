@@ -1,14 +1,19 @@
 import {mount} from '@vue/test-utils';
-import {getLocalVue} from '../getLocalVue';
+import {globalConfig} from '../getLocalVue';
 import {expect} from 'chai';
 import MoonSpace from '@/client/components/moon/MoonSpace.vue';
+import {SpaceType} from '@/common/boards/SpaceType';
 
 describe('MoonSpace', () => {
   it('has visible tile', async () => {
     const wrapper = mount(MoonSpace, {
-      localVue: getLocalVue(),
-      propsData: {
-        space: {id: 'm1'},
+      ...globalConfig,
+      props: {
+        space: {
+          id: 'm01',
+          bonus: [],
+          spaceType: SpaceType.LAND,
+        },
       },
     });
 
@@ -17,9 +22,13 @@ describe('MoonSpace', () => {
 
   it('has hidden tile if hidden props is passed', async () => {
     const wrapper = mount(MoonSpace, {
-      localVue: getLocalVue(),
-      propsData: {
-        space: {id: 'm1'},
+      ...globalConfig,
+      props: {
+        space: {
+          id: 'm01',
+          bonus: [],
+          spaceType: SpaceType.LAND,
+        },
         tileView: 'hide',
       },
     });

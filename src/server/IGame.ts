@@ -18,6 +18,7 @@ import {DeferredActionsQueue} from './deferredActions/DeferredActionsQueue';
 import {SerializedGame} from './SerializedGame';
 import {SpaceBonus} from '../common/boards/SpaceBonus';
 import {TileType} from '../common/TileType';
+import {ICard} from './cards/ICard';
 import {Turmoil} from './turmoil/Turmoil';
 import {AresData} from '../common/ares/AresData';
 import {MoonData} from './moon/MoonData';
@@ -38,14 +39,25 @@ export interface Score {
   playerScore: number;
 }
 
+/** The maximum values of the global parameters. */
+export interface GlobalParameterMaximums {
+  readonly temperature: number;
+  readonly oxygen: number;
+  readonly oceans: number;
+  readonly venus: number;
+}
+
 export interface IGame extends Logger {
   readonly id: GameId;
+  readonly name: string;
   readonly gameOptions: Readonly<GameOptions>;
   // Game-level data
   lastSaveId: number;
-  rng: SeededRandom;
-  spectatorId: SpectatorId | undefined;
+  readonly rng: SeededRandom;
+  readonly spectatorId: SpectatorId;
   deferredActions: DeferredActionsQueue;
+  /** Run every deferred action, including any added while running them, and then call `cb`. */
+  drainQueue(cb: () => void): void;
   createdTime: Date;
   gameAge: number; // Each log event increases it
   gameLog: Array<LogMessage>;
@@ -109,6 +121,15 @@ export interface IGame extends Logger {
   beholdTheEmperor: boolean;
   /** Double Down: tracking when an action is due to double down. Does not need to be serialized. */
   inDoubleDown: boolean;
+  /**
+   * Double Down: once the prelude is chosen, it's set here to be tracked during its play.
+   *
+   * Pretty much if you double down on New Partner, and draw a prelude, then the app
+   * needs to differentiate between New Partner and this one.  doubleDownPrelude: CardName;
+
+   */
+  doubleDownPrelude: CardName | undefined;
+
   /** If Vermin is in play and it has 10 or more animals */
   verminInEffect: boolean;
   /** If Exploitation of Venus is in effect */
@@ -126,6 +147,7 @@ export interface IGame extends Logger {
   getPlayerById(id: PlayerId): IPlayer;
   defer<T>(action: DeferredAction<T>, priority?: Priority): AndThen<T>;
   milestoneClaimed(milestone: IMilestone): boolean;
+  /** Returns true if Mars is fully terraformed, meaning the game should end with this generation. */
   marsIsTerraformed(): boolean;
   lastSoloGeneration(): number;
   isSoloModeWin(): boolean;
@@ -167,14 +189,17 @@ export interface IGame extends Logger {
    */
   /* for testing */ takeNextFinalGreeneryAction(): void;
   /* for testing */ worldGovernmentTerraforming(): void;
-  /* for World Government Advisor */
+  /* for World Government Advisor and Terra colony */
   worldGovernmentTerraformingInput(player: IPlayer): OrOptions;
+  /* for World Government Advisor and Terra colony */
+  temporarySolarPhase(player: IPlayer, cb: () => void): void;
   increaseOxygenLevel(player: IPlayer, increments: -2 | -1 | 1 | 2): void;
   getOxygenLevel(): number;
   increaseVenusScaleLevel(player: IPlayer, increments: -1 | 1 | 2 | 3): number;
   getVenusScaleLevel(): number;
   increaseTemperature(player: IPlayer, increments: -2 | -1 | 1 | 2 | 3): undefined;
   getTemperature(): number;
+  readonly max: GlobalParameterMaximums;
   getGeneration(): number;
   getPassedPlayers():ReadonlyArray<Color>;
   /**
@@ -199,6 +224,11 @@ export interface IGame extends Logger {
    * a hazard tile, or overplacing one tile on top of another.
    */
   grantPlacementBonuses(player: IPlayer, space: Space, coveringExistingTile?: boolean): void
+  /**
+   * Calls f(cardOwner, card) for every card in every player's tableau,
+   * in generation order.
+   */
+  triggerForAllCards(f: (cardOwner: IPlayer, card: ICard) => void): void;
 
   /**
    * Gives all the bonuses from a space on the map.

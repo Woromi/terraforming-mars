@@ -1,7 +1,7 @@
 <template>
-  <div :class="'filterDiv party-container party-background--' + partyNameToCss(party.name) + getUnavailablePartyClass()">
+  <div :class="'filterDiv party-container party-background--' + partyNameToCss(party.name) + unavailablePartyClass">
     <div :class="'board-party board-party--' + partyNameToCss(party.name)">
-      <div :class="getDominantClass()">
+      <div :class="dominantClass">
         <div class="send-delegate-leader-spot">
           <div v-if="party.partyLeader" :class="['player-token', party.partyLeader]"></div>
         </div>
@@ -18,21 +18,30 @@
   </div>
 </template>
 <script lang="ts">
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import {PartyModel} from '@/common/models/TurmoilModel';
 import {PartyName} from '@/common/turmoil/PartyName';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'Party',
   props: {
     party: {
       type: Object as () => PartyModel,
+      required: true,
     },
     isDominant: {
       type: Boolean,
     },
     isAvailable: {
       type: Boolean,
+    },
+  },
+  computed: {
+    dominantClass(): string {
+      return 'select-party-leader-spot' + (this.isDominant ? ' dominance-marker' : '');
+    },
+    unavailablePartyClass(): string {
+      return this.isAvailable ? '' : ' unavailable-party';
     },
   },
   methods: {
@@ -42,12 +51,6 @@ export default Vue.extend({
         return '';
       }
       return party.toLowerCase().split(' ').join('_');
-    },
-    getDominantClass(): string {
-      return 'select-party-leader-spot' + (this.isDominant ? ' dominance-marker' : '');
-    },
-    getUnavailablePartyClass(): string {
-      return this.isAvailable ? '' : ' unavailable-party';
     },
   },
 });

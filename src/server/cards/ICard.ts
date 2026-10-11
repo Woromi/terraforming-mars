@@ -2,7 +2,7 @@ import {CardType} from '../../common/cards/CardType';
 import {IProjectCard} from './IProjectCard';
 import {Space} from '../boards/Space';
 import {PlayerInput} from '../PlayerInput';
-import {IPlayer} from '../IPlayer';
+import {CanAffordOptions, IPlayer} from '../IPlayer';
 import {Tag} from '../../common/cards/Tag';
 import {CardResource} from '../../common/CardResource';
 import {CardName} from '../../common/cards/CardName';
@@ -22,6 +22,7 @@ import {Warning} from '../../common/cards/Warning';
 import {Resource} from '../../common/Resource';
 import {Units} from '../../common/Units';
 import {SerializedCard} from '../SerializedCard';
+import {UndergroundResourceToken} from '../../common/underworld/UndergroundResourceToken';
 
 /*
  * Represents a card which has an action that itself allows a player
@@ -45,6 +46,7 @@ export type GetVictoryPointsContext = 'default' | 'projectWorkshop';
 export interface ICard {
   readonly name: CardName;
   readonly tags: ReadonlyArray<Tag>;
+  canPlay(player: IPlayer, canAffordOptions?: CanAffordOptions): boolean;
   play(player: IPlayer): PlayerInput | undefined;
   /**
    * Describes the M€ discount `player` could apply to playing `card`.
@@ -84,6 +86,12 @@ export interface ICard {
   onCardPlayedFromAnyPlayer?: never;
   onStandardProject?(player: IPlayer, project: IStandardProjectCard): void;
   onTilePlaced?(cardOwner: IPlayer, activePlayer: IPlayer, space: Space, boardType: BoardType): void;
+  /**
+   * Estimates what `onTilePlaced` will give `player` when they place a tile of `tileType` on `space`.
+   *
+   * Used by cards that let a placement pay for their own cost. Manutech is applied by the caller.
+   */
+  gainsFromTilePlacement?(player: IPlayer, space: Space, tileType: TileType): {stock: Units, production: Units};
   onDiscard?(player: IPlayer): void;
   /**
    * Called when anybody gains TR
@@ -109,13 +117,13 @@ export interface ICard {
 
   /**
    * Optional callback when any player identifies a space.
-  *
+   *
    * @param cardOwner the player who owns THIS CARD.
    * @param identifyingPlayer the player performing the identification action,
    *        or undefined if it is the neutral player (game setup or global event.)
-   * @param space the space that was just identified.
+   * @param token the underground resource token that was revealed.
    */
-  onIdentificationByAnyPlayer?(cardOwner: IPlayer, identifyingPlayer: IPlayer | undefined, space: Space): void;
+  onIdentificationByAnyPlayer?(cardOwner: IPlayer, identifyingPlayer: IPlayer | undefined, token: UndergroundResourceToken): void;
   onIdentification?: never;
 
   /**
@@ -149,6 +157,7 @@ export interface ICard {
   onColonyAdded?: never;
 
   onNonCardTagAdded?(player: IPlayer, tag: Tag): void;
+  onNonCardTagAddedByAnyPlayer?(cardOwner: IPlayer, tag: Tag): void;
 
   readonly cost?: number; /** Used with IProjectCard and PreludeCard. */
   readonly type: CardType;
@@ -162,7 +171,9 @@ export interface ICard {
    *
    * See: IProjectCard.additionalProjectCosts
    */
-  readonly warnings: Set<Warning>;
+  readonly warnings: ReadonlySet<Warning>;
+  addWarning(warning: Warning): void;
+  clearWarnings(): void;
 
   readonly behavior?: Behavior,
 
@@ -215,7 +226,6 @@ export interface ICard {
   deserialize?(serialized: SerializedCard): void;
 
   /** The generation the card was activated. Used for Duncan and Underworld cards. */
-  // TODO(kberg): move to json?
   generationUsed?: number;
 }
 

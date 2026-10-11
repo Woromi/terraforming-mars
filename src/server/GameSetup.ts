@@ -3,7 +3,9 @@ import {BoardName} from '../common/boards/BoardName';
 import {ElysiumBoard} from './boards/ElysiumBoard';
 import {IGame} from './IGame';
 import {GameOptions} from './game/GameOptions';
-import {GameId, isPlayerId, safeCast} from '../common/Types';
+import {GameId, SpaceId, isPlayerId, safeCast} from '../common/Types';
+import {SpaceType} from '../common/boards/SpaceType';
+import {SerializedBoard} from './boards/SerializedBoard';
 import {HellasBoard} from './boards/HellasBoard';
 import {TharsisBoard} from './boards/TharsisBoard';
 import {IPlayer} from './IPlayer';
@@ -16,27 +18,39 @@ import {SerializedGame} from './SerializedGame';
 import {TerraCimmeriaBoard} from './boards/TerraCimmeriaBoard';
 import {AmazonisBoard} from './boards/AmazonisBoard';
 import {UtopiaPlanitiaBoard} from './boards/UtopiaPlanitiaBoard';
-import {VastitasBorealisNovusBoard} from './boards/VastitasBorealisNovusBoard';
-import {TerraCimmeriaNovusBoard} from './boards/TerraCimmeriaNovusBoard';
+import {VastitasBorealisNovaBoard} from './boards/VastitasBorealisNovaBoard';
+import {TerraCimmeriaNovaBoard} from './boards/TerraCimmeriaNovaBoard';
 import {Board} from './boards/Board';
 import {Space} from './boards/Space';
-import {Hollandia} from './boards/Hollandia';
+import {HollandiaBoard} from './boards/HollandiaBoard';
+import {AmazonisPlanitiaBoard} from './boards/AmazonisPlanitiaBoard';
 
 type BoardFactory = (new (spaces: ReadonlyArray<Space>) => MarsBoard) & {newInstance: (gameOptions: GameOptions, rng: Random) => MarsBoard};
+
+// When renaming a board, add the old name here so saved games can still be loaded.
+const BOARD_RENAMES = new Map<string, BoardName>([
+  ['vastitas borealis novus', BoardName.VASTITAS_BOREALIS_NOVA],
+  ['terra cimmeria novus', BoardName.TERRA_CIMMERIA_NOVA],
+]);
+
+export function normalizeBoardName(name: string): BoardName {
+  return BOARD_RENAMES.get(name) ?? name as BoardName;
+}
 
 const boards: Record<BoardName, BoardFactory> = {
   [BoardName.THARSIS]: TharsisBoard,
   [BoardName.HELLAS]: HellasBoard,
   [BoardName.ELYSIUM]: ElysiumBoard,
   [BoardName.UTOPIA_PLANITIA]: UtopiaPlanitiaBoard,
-  [BoardName.VASTITAS_BOREALIS_NOVUS]: VastitasBorealisNovusBoard,
-  [BoardName.TERRA_CIMMERIA_NOVUS]: TerraCimmeriaNovusBoard,
+  [BoardName.VASTITAS_BOREALIS_NOVA]: VastitasBorealisNovaBoard,
+  [BoardName.TERRA_CIMMERIA_NOVA]: TerraCimmeriaNovaBoard,
   [BoardName.AMAZONIS]: AmazonisBoard,
   [BoardName.ARABIA_TERRA]: ArabiaTerraBoard,
   [BoardName.TERRA_CIMMERIA]: TerraCimmeriaBoard,
   [BoardName.VASTITAS_BOREALIS]: VastitasBorealisBoard,
-  [BoardName.HOLLANDIA]: Hollandia,
-};
+  [BoardName.HOLLANDIA]: HollandiaBoard,
+  [BoardName.AMAZONIS_PLANITIA]: AmazonisPlanitiaBoard,
+} satisfies Record<BoardName, BoardFactory>;
 
 export class GameSetup {
   public static newBoard(gameOptions: GameOptions, rng: Random): MarsBoard {
@@ -46,11 +60,9 @@ export class GameSetup {
 
   public static deserializeBoard(players: Array<IPlayer>, gameOptions: GameOptions, d: SerializedGame) {
     const playersForBoard = players.length !== 1 ? players : [players[0], GameSetup.neutralPlayerFor(d.id)];
+    migrateColonySpaceIds(d.board);
+    migrateEdges(d.board, gameOptions.boardName);
     const deserialized = Board.deserialize(d.board, playersForBoard).spaces;
-    // TODO(kberg): Remove after 2025-10-25
-    if (gameOptions.boardName === 'Hollandia regels' as any) {
-      gameOptions.boardName = BoardName.HOLLANDIA;
-    }
     const Factory: BoardFactory = boards[gameOptions.boardName];
     return new Factory(deserialized);
   }
@@ -91,5 +103,43 @@ export class GameSetup {
 
     placeCityAndForest(game, 'top');
     placeCityAndForest(game, 'bottom');
+  }
+}
+
+// TODO(kberg): Remove after 2028-01-01
+// Mars colony spaces used to have bare two-digit ids ('01', '02', '69'-'78'). They now lead with 'c'.
+function migrateColonySpaceIds(board: SerializedBoard): void {
+  for (const space of board.spaces) {
+    if (space.spaceType === SpaceType.COLONY && !space.id.startsWith('c')) {
+      space.id = `c${space.id}` as SpaceId;
+    }
+  }
+}
+
+// TODO(kberg): Remove after 2026-12-01
+// Spaces used to have no edge attribute. Every 61-space board shares the same edges.
+// Amazonis Planitia is excluded because it postdates the edge attribute.
+const LEGACY_EDGES: ReadonlyArray<string> = [
+  '03', '04', '05', '06', '07',
+  '08', '13',
+  '14', '20',
+  '21', '28',
+  '29', '37',
+  '38', '45',
+  '46', '52',
+  '53', '58',
+  '59', '60', '61', '62', '63',
+];
+function migrateEdges(board: SerializedBoard, boardName: BoardName): void {
+  if (boardName === BoardName.AMAZONIS_PLANITIA) {
+    return;
+  }
+  if (board.spaces.find((space) => space.id === '03')?.edge === true) {
+    return;
+  }
+  for (const space of board.spaces) {
+    if (LEGACY_EDGES.includes(space.id)) {
+      space.edge = true;
+    }
   }
 }

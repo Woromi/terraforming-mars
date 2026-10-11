@@ -23,7 +23,7 @@ export class FabricatedScandal extends Card implements IProjectCard {
         cardNumber: 'U013',
         renderData: CardRenderer.builder((b) => {
           b.corruption().br;
-          b.text('most').tr(1, {all}).colon().minus().tr(1).br;
+          b.text('most').tr(1, {all}).colon().tr(-1).br;
           b.text('least').tr(1, {all}).colon().plus().tr(1).br;
         }),
         description: 'Gain 1 corruption. The players with the highest TR lose 1 TR. ' +
@@ -43,7 +43,7 @@ export class FabricatedScandal extends Card implements IProjectCard {
 
     const lowestTR = Math.min(...game.players.map(((p) => p.terraformRating)));
     game.players.forEach((p) => {
-      if (p.terraformRating === lowestTR && player.canAfford({cost: 0, tr: {tr: 1}})) {
+      if (p.terraformRating === lowestTR && p.canAfford({cost: 0, tr: {tr: 1}})) {
         p.increaseTerraformRating(1, {log: true});
       }
     });

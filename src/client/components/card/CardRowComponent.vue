@@ -5,14 +5,14 @@
   <CardRenderEffectBoxComponent v-else-if="isEffect(componentData)" :effectData="componentData" />
   <CardRenderTileComponent v-else-if="isTile(componentData)" :item="componentData" />
   <CardDescription v-else-if="isDescription(componentData)" :item="componentData" />
-  <CardRenderCorpBoxComponent v-else-if="isCorpBox(componentData)" :rows="componentData.rows" :label="corpBoxLabel()" />
+  <CardRenderCorpBoxComponent v-else-if="isCorpBox(componentData)" :rows="componentData.rows" :label="corpBoxLabel" />
   <div v-else>n/a</div>
 </template>
 
 <script lang="ts">
 
-import Vue from 'vue';
-import {isIDescription} from '@/common/cards/render/ICardRenderDescription';
+import {defineComponent} from 'vue';
+import {isDescription as isCardRenderDescription} from '@/common/cards/render/CardRenderDescription';
 import {
   ICardRenderCorpBoxAction,
   ICardRenderCorpBoxEffect,
@@ -35,7 +35,7 @@ import CardRenderTileComponent from '@/client/components/card/CardRenderTileComp
 import CardDescription from '@/client/components/card/CardDescription.vue';
 import CardRenderSymbolComponent from '@/client/components/card/CardRenderSymbolComponent.vue';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'CardRowComponent',
   props: {
     componentData: {
@@ -52,21 +52,7 @@ export default Vue.extend({
     CardRenderTileComponent,
     CardDescription,
   },
-  methods: {
-    isItem: isICardRenderItem,
-    isSymbol: isICardRenderSymbol,
-    isEffect: isICardRenderEffect,
-    isDescription(componentData: ItemType): boolean {
-      return typeof componentData === 'string' || componentData instanceof String || isIDescription(this.componentData);
-    },
-    isTile: isICardRenderTile,
-    isProduction: isICardRenderProductionBox,
-    isCorpBoxEffect: isICardRenderCorpBoxEffect,
-    isCorpBoxAction: isICardRenderCorpBoxAction,
-    isCorpBoxEffectAction: isICardRenderCorpBoxEffectAction,
-    isCorpBox(item: ItemType): item is ICardRenderCorpBoxEffect | ICardRenderCorpBoxAction | ICardRenderCorpBoxEffectAction {
-      return this.isCorpBoxEffect(item) || this.isCorpBoxAction(item) || this.isCorpBoxEffectAction(item);
-    },
+  computed: {
     corpBoxLabel(): string {
       if (this.isCorpBoxEffect(this.componentData)) {
         return 'effect';
@@ -76,6 +62,22 @@ export default Vue.extend({
         return 'effect/action';
       }
       return 'n/a';
+    },
+  },
+  methods: {
+    isItem: isICardRenderItem,
+    isSymbol: isICardRenderSymbol,
+    isEffect: isICardRenderEffect,
+    isDescription(componentData: ItemType): boolean {
+      return typeof componentData === 'string' || componentData instanceof String || isCardRenderDescription(this.componentData);
+    },
+    isTile: isICardRenderTile,
+    isProduction: isICardRenderProductionBox,
+    isCorpBoxEffect: isICardRenderCorpBoxEffect,
+    isCorpBoxAction: isICardRenderCorpBoxAction,
+    isCorpBoxEffectAction: isICardRenderCorpBoxEffectAction,
+    isCorpBox(item: ItemType): item is ICardRenderCorpBoxEffect | ICardRenderCorpBoxAction | ICardRenderCorpBoxEffectAction {
+      return this.isCorpBoxEffect(item) || this.isCorpBoxAction(item) || this.isCorpBoxEffectAction(item);
     },
 
   },

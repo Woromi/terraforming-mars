@@ -22,20 +22,23 @@ export enum SpaceBonus {
     ENERGY_PRODUCTION, // 12
 
     // Vastitas Borealis-specific
-    TEMPERATURE, // 13
+    _TEMPERATURE_3MC, // 13 Deprecated. Saved games have it migrated to TEMPERATURE_4MC on load.
 
     // Amazonis-specific
     _RESTRICTED, // 14
     ASTEROID, // 15 // Used by Deimos Down Ares
 
-    // Vastitas Borealis Novus-specific
+    // Vastitas Borealis Nova-specific
     DELEGATE, // 16
-    // Terra Cimmeria Novus-specific
+    // Terra Cimmeria Nova-specific
     COLONY, // 17
-    TEMPERATURE_4MC, // 18, Vastitas Borealis Novus-specific, costs 4MC not 3
+    // TODO(kberg): Rename to TEMPERATURE after 2026-12-01
+    TEMPERATURE_4MC, // 18 Vastitas Borealis and Vastitas Borealis Nova
+    // Amazonis Planitia-specific
+    STANDARD_RESOURCE, // 19 The player chooses any one standard resource.
 }
 
-const TO_STRING_MAP: Record<SpaceBonus, string> = {
+const TO_STRING_MAP = {
   [SpaceBonus.TITANIUM]: 'Titanium',
   [SpaceBonus.STEEL]: 'Steel',
   [SpaceBonus.PLANT]: 'Plant',
@@ -49,13 +52,14 @@ const TO_STRING_MAP: Record<SpaceBonus, string> = {
   [SpaceBonus.DATA]: 'Data',
   [SpaceBonus.SCIENCE]: 'Science',
   [SpaceBonus.ENERGY_PRODUCTION]: 'Energy Production',
-  [SpaceBonus.TEMPERATURE]: 'Temperature',
+  [SpaceBonus._TEMPERATURE_3MC]: 'UNUSED',
   [SpaceBonus._RESTRICTED]: 'UNUSED',
   [SpaceBonus.ASTEROID]: 'Asteroid',
   [SpaceBonus.DELEGATE]: 'Delegate',
   [SpaceBonus.COLONY]: 'Colony',
   [SpaceBonus.TEMPERATURE_4MC]: 'Temperature',
-};
+  [SpaceBonus.STANDARD_RESOURCE]: 'Standard resource',
+} satisfies Record<SpaceBonus, string>;
 
 export namespace SpaceBonus {
   export function toString(spaceBonus: SpaceBonus): string {

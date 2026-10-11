@@ -5,12 +5,14 @@ import {InputResponse, isSelectPaymentResponse} from '../../common/inputs/InputR
 import {IPlayer} from '../IPlayer';
 import {SelectPaymentModel} from '../../common/models/PlayerInputModel';
 import {InputError} from './InputError';
+import {Units} from '../../common/Units';
 
 export class SelectPayment extends BasePlayerInput<Payment> {
   constructor(
     title: string | Message,
     public amount: number,
     public paymentOptions: Partial<PaymentOptions>,
+    public reserveUnits?: Units | undefined,
   ) {
     super('payment', title);
     this.buttonLabel = 'Pay'; // no input button
@@ -23,7 +25,6 @@ export class SelectPayment extends BasePlayerInput<Payment> {
       type: 'payment',
       amount: this.amount,
       paymentOptions: {
-        // TODO(kberg): These are set both here and in Player. Consolidate, perhaps.
         heat: player.canUseHeatAsMegaCredits,
         lunaTradeFederationTitanium: player.canUseTitaniumAsMegacredits,
         ...this.paymentOptions,
@@ -32,6 +33,11 @@ export class SelectPayment extends BasePlayerInput<Payment> {
       auroraiData: player.getSpendable('auroraiData'),
       kuiperAsteroids: player.getSpendable('kuiperAsteroids'),
       spireScience: player.getSpendable('spireScience'),
+      reserveUnits: this.reserveUnits,
+
+      floaters: 0,
+      microbes: 0,
+      graphene: 0,
     };
   }
 
@@ -43,13 +49,8 @@ export class SelectPayment extends BasePlayerInput<Payment> {
     if (!isPayment(payment)) {
       throw new InputError('payment is not a valid type');
     }
-    // TODO(kberg): This is called here and in SelectPaymentDeferred.
-    // There's no reason for both.
-    if (!player.canSpend(payment)) {
+    if (!player.canSpend(payment, this.reserveUnits)) {
       throw new InputError('You do not have that many resources');
-    }
-    if (!player.canSpend(payment)) {
-      throw new InputError('You do not have that many resources to spend');
     }
     const amountPaid = player.payingAmount(payment, this.paymentOptions);
     if (amountPaid < this.amount) {

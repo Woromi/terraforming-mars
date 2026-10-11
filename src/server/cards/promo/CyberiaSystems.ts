@@ -7,6 +7,11 @@ import {Size} from '../../../common/cards/render/Size';
 import {IPlayer} from '../../IPlayer';
 import {ICard} from '../ICard';
 import {Priority} from '../../deferredActions/Priority';
+import {uppercase} from '../Options';
+
+const HELP_TEXT = `
+Officially this requires 2 cards with production bonuses, but can't be predicted on this server, so the language here is changed to "up to 2 cards."
+` as const;
 
 export class CyberiaSystems extends RoboticWorkforceBase {
   constructor() {
@@ -21,12 +26,13 @@ export class CyberiaSystems extends RoboticWorkforceBase {
         cardNumber: 'X53',
         renderData: CardRenderer.builder((b) => {
           b.production((pb) => pb.steel(1));
-          b.text('Copy', Size.SMALL, true)
+          b.text('Copy', {size: Size.SMALL, uppercase})
             .production((pb) => pb.tag(Tag.BUILDING))
             .production((pb) => pb.tag(Tag.BUILDING))
             .br;
         }),
         description: 'Increase your steel production 1 step. Copy the PRODUCTION BOXES of 2 of your cards with building tags.',
+        helpText: HELP_TEXT,
       },
     });
   }

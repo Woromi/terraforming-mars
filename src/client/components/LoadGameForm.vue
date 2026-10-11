@@ -1,14 +1,14 @@
 <template>
   <div id="load-game">
-      <h1><span v-i18n>{{ APP_NAME }}</span> — <span v-i18n>Load Game</span></h1>
+      <h1><HomeLink>{{ APP_NAME }}</HomeLink> — <span v-i18n>Load Game</span></h1>
 
       <div class="load-game-form load-game--block">
           <div class="container load-game-options">
               <div >
-                  <label for="gameId">Game, player, or spectator ID to reload:</label><br/>
-                  <input class="form-input form-inline load-game-id" :placeholder="'Game Id'" v-model="gameId" /><br/>
-                  <label for="rollbackCount">Number of saves to delete before loading:</label><br/>
-                  <input class="form-input form-inline load-game-id" value="0" v-model="rollbackCount" /><br/>
+                  <label for="gameId">Game, player, or spectator ID to reload:</label><br>
+                  <input class="form-input form-inline load-game-id" :placeholder="'Game Id'" v-model="gameId" ><br>
+                  <label for="rollbackCount">Number of saves to delete before loading:</label><br>
+                  <input class="form-input form-inline load-game-id" value="0" v-model="rollbackCount" ><br>
                   <AppButton title="Load Game" size="big" type="success" @click="loadGame" />
               </div>
           </div>
@@ -17,9 +17,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import * as constants from '@/common/constants';
 import AppButton from '@/client/components/common/AppButton.vue';
+import HomeLink from '@/client/components/common/HomeLink.vue';
 import {LoadGameFormModel} from '@/common/models/LoadGameFormModel';
 import {SimpleGameModel} from '@/common/models/SimpleGameModel';
 import {vueRoot} from '@/client/components/vueRoot';
@@ -31,9 +32,10 @@ type LoadGameFormDataModel = {
   rollbackCount: number;
 };
 
-export default Vue.extend({
+export default defineComponent({
   name: 'LoadGameForm',
   components: {
+    HomeLink,
     AppButton,
   },
   data(): LoadGameFormDataModel {

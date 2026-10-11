@@ -1,12 +1,13 @@
 import {expect} from 'chai';
 import {TestPlayer} from '../../TestPlayer';
 import {IGame} from '../../../src/server/IGame';
-import {cast, runAllActions, setRulingParty, addGreenery} from '../../TestingUtils';
+import {runAllActions, setRulingParty, addGreenery} from '../../TestingUtils';
 import {REDS_BONUS_1, REDS_BONUS_2, REDS_POLICY_3} from '../../../src/server/turmoil/parties/Reds';
 import {MoonExpansion} from '../../../src/server/moon/MoonExpansion';
 import {OrOptions} from '../../../src/server/inputs/OrOptions';
 import {testGame} from '../../TestGame';
 import {PartyName} from '../../../src/common/turmoil/PartyName';
+import {cast} from '@/common/utils/utils';
 
 describe('Reds', () => {
   let player: TestPlayer;
@@ -51,6 +52,29 @@ describe('Reds', () => {
     bonus.grant(game);
     expect(player.terraformRating).to.eq(initialPlayerTR - 1);
     expect(secondPlayer.terraformRating).to.eq(initialPlayerTR - 1);
+  });
+
+  it('Ruling bonus 1: Solo', () => {
+    const [game, player] = testGame(1, {turmoilExtension: true});
+
+    player.setTerraformRating(20);
+    REDS_BONUS_1.grant(game);
+    expect(player.terraformRating).to.eq(21);
+
+    REDS_BONUS_1.grant(game);
+    expect(player.terraformRating).to.eq(21);
+  });
+
+  it('Ruling bonus 2: Solo', () => {
+    const [game, player] = testGame(1, {turmoilExtension: true});
+
+    player.setTerraformRating(20);
+    REDS_BONUS_2.grant(game);
+    expect(player.terraformRating).to.eq(20);
+
+    player.setTerraformRating(21);
+    REDS_BONUS_2.grant(game);
+    expect(player.terraformRating).to.eq(20);
   });
 
   it('Ruling policy 1: When you take an action that raises TR, you MUST pay 3 M€ per step raised', () => {

@@ -19,10 +19,10 @@ export class CopernicusSolarArrays extends Card {
       },
 
       metadata: {
-        description: 'Spend 1 titanium. Gain 2 heat. Incease your energy production 1 step.',
+        description: 'Spend 1 titanium. Gain 2 heat. Increase your energy production 1 step.',
         cardNumber: 'M44',
         renderData: CardRenderer.builder((b) => {
-          b.minus().titanium(1);
+          b.titanium(-1);
           b.br;
           b.heat(2);
           b.br;

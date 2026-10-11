@@ -10,7 +10,7 @@ import {Random} from '../../common/utils/Random';
 import {preservingShuffle} from '../../server/boards/BoardBuilder';
 
 function colonySpace(id: SpaceId): Space {
-  return {id, spaceType: SpaceType.COLONY, x: -1, y: -1, bonus: []};
+  return {id, spaceType: SpaceType.COLONY, x: -1, y: -1, bonus: [], edge: false};
 }
 
 export class MoonBoard extends Board {
@@ -51,10 +51,6 @@ export class MoonBoard extends Board {
     }
     const spaces = b.build();
     return new MoonBoard(spaces);
-  }
-
-  public constructor(spaces: Array<Space>) {
-    super(spaces, undefined, []);
   }
 }
 
@@ -99,6 +95,7 @@ class Builder {
           x: xCoordinate,
           y: row,
           bonus: this.bonuses[idx],
+          edge: false, // There are no edges on The Moon
         };
         this.spaces.push(space);
         idx++;
@@ -114,7 +111,6 @@ class Builder {
       const idx = Number(spaceId.substring(1, 3));
       preservedSpaces.push(idx - 2);
     }
-    preservedSpaces.sort((a, b) => a - b);
     preservingShuffle(this.spaceTypes, preservedSpaces, rng);
     preservingShuffle(this.bonuses, preservedSpaces, rng);
     return;

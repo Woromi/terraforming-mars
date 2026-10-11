@@ -1,20 +1,20 @@
 <template>
-        <div class="players-overview" v-if="hasPlayers()">
-            <overview-settings />
+        <div class="players-overview" v-if="hasPlayers">
+            <OverviewSettings />
             <div class="other_player" v-if="thisPlayer === undefined || players.length > 1">
-                <div v-for="(otherPlayer, index) in getPlayersInOrder()" :key="otherPlayer.color">
-                    <other-player v-if="thisPlayer === undefined || otherPlayer.color !== thisPlayer.color" :player="otherPlayer" :playerIndex="index"/>
+                <div v-for="(otherPlayer, index) in playersInOrder" :key="otherPlayer.color">
+                    <OtherPlayer v-if="thisPlayer === undefined || otherPlayer.color !== thisPlayer.color" :player="otherPlayer" :playerIndex="index"/>
                 </div>
             </div>
-            <player-info v-for="(p, index) in getPlayersInOrder()"
+            <PlayerInfo v-for="(p, index) in playersInOrder"
               :player="p"
               :key="p.color"
               :playerView="playerView"
               :firstForGen="getIsFirstForGen(p)"
               :actionLabel="getActionLabel(p)"
               :playerIndex="index"/>
-            <div v-if="playerView.players.length > 1 && thisPlayer !== undefined" class="player-divider" />
-            <player-info
+            <div v-if="playerView.players.length > 1 && thisPlayer !== undefined" class="player-divider" ></div>
+            <PlayerInfo
               v-if="thisPlayer !== undefined"
               :player="thisPlayer"
               :key="thisPlayer.color"
@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import PlayerInfo from '@/client/components/overview/PlayerInfo.vue';
 import OverviewSettings from '@/client/components/overview/OverviewSettings.vue';
 import OtherPlayer from '@/client/components/OtherPlayer.vue';
@@ -49,11 +49,12 @@ export const playerIndex = (
   return -1;
 };
 
-export default Vue.extend({
+export default defineComponent({
   name: 'PlayersOverview',
   props: {
     playerView: {
       type: Object as () => ViewModel,
+      required: true,
     },
   },
   computed: {
@@ -63,23 +64,10 @@ export default Vue.extend({
     thisPlayer(): PublicPlayerModel | undefined {
       return this.playerView.thisPlayer;
     },
-  },
-  components: {
-    'player-info': PlayerInfo,
-    'overview-settings': OverviewSettings,
-    'other-player': OtherPlayer,
-  },
-  data() {
-    return {};
-  },
-  methods: {
     hasPlayers(): boolean {
       return this.players.length > 0;
     },
-    getIsFirstForGen(player: PublicPlayerModel): boolean {
-      return playerIndex(player.color, this.players) === 0;
-    },
-    getPlayersInOrder(): Array<PublicPlayerModel> {
+    playersInOrder(): Array<PublicPlayerModel> {
       const players = this.players;
       if (this.thisPlayer === undefined) {
         return players;
@@ -100,6 +88,16 @@ export default Vue.extend({
       // return all but the focused user
       return result.slice(0, -1);
     },
+  },
+  components: {
+    PlayerInfo,
+    OverviewSettings,
+    OtherPlayer,
+  },
+  methods: {
+    getIsFirstForGen(player: PublicPlayerModel): boolean {
+      return playerIndex(player.color, this.players) === 0;
+    },
     getActionLabel(player: PublicPlayerModel): ActionLabel {
       if (this.playerView.game.phase === Phase.DRAFTING) {
         if (player.needsToDraft) {
@@ -113,11 +111,21 @@ export default Vue.extend({
         } else {
           return 'none';
         }
+      } else if (this.playerView.game.phase === Phase.SOLAR) {
+        // World Government Advisor and Terra briefly enter the Solar phase during the active player's turn.
+        // Otherwise this is World Government Terraforming, where activePlayer is stale and the running
+        // timer shows who is deciding.
+        const activePlayerIsDeciding = this.players.some((p) => p.isActive && p.timer.running);
+        if (!activePlayerIsDeciding) {
+          return player.timer.running ? 'active' : 'none';
+        }
       }
       if (this.playerView.game.passedPlayers.includes(player.color)) {
         return 'passed';
       }
-      if (player.isActive) return 'active';
+      if (player.isActive) {
+        return 'active';
+      }
       const notPassedPlayers = this.players.filter(
         (p: PublicPlayerModel) => !this.playerView.game.passedPlayers.includes(p.color),
       );

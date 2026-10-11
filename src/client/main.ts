@@ -1,10 +1,12 @@
-import Vue from 'vue';
+import {createApp, defineAsyncComponent} from 'vue';
 
 import {trimEmptyTextNodes} from '@/client/directives/TrimWhitespace';
-import {mainAppSettings} from '@/client/components/App';
+import App from '@/client/components/App.vue';
 import {getPreferences} from '@/client/utils/PreferencesManager';
+
 import i18nPlugin from '@/client/plugins/i18n.plugin';
 import {startOauth} from '@/client/oauth';
+const PlayerInputFactory = defineAsyncComponent(() => import(/* webpackChunkName: "player-input" */ '@/client/components/PlayerInputFactory.vue'));
 
 declare global {
   interface Window {
@@ -18,17 +20,20 @@ async function bootstrap() {
   if (lang !== 'en') {
     try {
       window._translations = await fetch(`assets/locales/${lang}.json`).then((res) => res.json());
-      // TODO - add a nice loader for this fetch
     } catch (err) {
       console.warn(`Cannot load ${lang} translations. See network for details.`);
     }
   }
 
-  Vue.use(i18nPlugin);
+  const app = createApp(App);
 
-  Vue.directive('trim-whitespace', {
-    inserted: trimEmptyTextNodes,
-    componentUpdated: trimEmptyTextNodes,
+  app.use(i18nPlugin);
+
+  app.component('PlayerInputFactory', PlayerInputFactory);
+
+  app.directive('trim-whitespace', {
+    mounted: trimEmptyTextNodes,
+    updated: trimEmptyTextNodes,
   });
 
   if (window.isSecureContext && 'serviceWorker' in navigator) {
@@ -39,10 +44,9 @@ async function bootstrap() {
     });
   }
 
-  new Vue(mainAppSettings);
+  app.mount('#app');
 
   window.onload = startOauth;
 }
 
 bootstrap();
-

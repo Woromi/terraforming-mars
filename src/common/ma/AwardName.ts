@@ -58,11 +58,12 @@ export const awardNames = [
   'Naturalist',
   'Voyager',
 
-  // Vastitas Borealis Novus
-  'Traveller',
+  // Vastitas Borealis Nova
+  'Traveller', // And modular
   'Landscaper',
   'Highlander',
   'Manufacturer',
+  'Blacksmith',
 
   // Underworld
   'Kingpin',
@@ -78,12 +79,13 @@ export const awardNames = [
   'Electrician',
   'Founder',
   'Incorporator',
+  'Innovator',
   'Investor',
   'Metropolist',
   'Mogul',
-  'Politician', // New Most party leaders and influence compbined
-  'Suburbian',
-  // 'Traveller',
+  'Physicist',
+  'Politician',
+  'Suburbian', // Matches Edgedancer.
   // 'Zoologist', // Most animal and microbe resources. Currently Zoologist2
 ] as const;
 
@@ -93,9 +95,8 @@ export const AWARD_RENAMES = new Map<string, AwardName>([
   // When renaming an award add the old name here (like the example below), and add a TODO (like the example below)
   // And remember to add a test in spec.ts.
 
-  // TODO(yournamehere): remove after 2021-04-05
-  // TODO(kberg): Remove after 2021-08-15
-  ['EdgeLord', 'Excavator'],
+  // TODO(yournamehere): remove after YYYY-MM-DD
+  // ['EdgeLord', 'Excavator'],
 ]);
 
 export function maybeRenamedAward(name: string): AwardName {

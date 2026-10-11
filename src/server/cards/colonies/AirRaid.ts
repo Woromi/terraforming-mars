@@ -7,9 +7,12 @@ import {CardResource} from '../../../common/CardResource';
 import {RemoveResourcesFromCard} from '../../deferredActions/RemoveResourcesFromCard';
 import {StealResources} from '../../deferredActions/StealResources';
 import {Card} from '../Card';
-import {Size} from '../../../common/cards/render/Size';
 import {CardRenderer} from '../render/CardRenderer';
-import {all} from '../Options';
+import {all, uppercase} from '../Options';
+
+const HELP_TEXT = `
+Air Raid requires removing 1 floater and stealing exactly 5 M€ from one opponent. These are treated as a package deal, so Air Raid cannot be played unless an opponent has at least 5 M€. If no opponent has 5 M€, the card is unavailable even if you have a floater.
+` as const;
 
 export class AirRaid extends Card implements IProjectCard {
   constructor() {
@@ -23,18 +26,25 @@ export class AirRaid extends Card implements IProjectCard {
         description: 'Requires that you lose 1 floater. Steal 5 M€ from any player.',
         renderData: CardRenderer.builder((b) => {
           b.minus().resource(CardResource.FLOATER);
-          b.text('steal', Size.MEDIUM, true).megacredits(5, {all});
+          b.text('steal', {uppercase}).megacredits(5, {all});
         }),
+        helpText: HELP_TEXT,
       },
     });
   }
 
   public override bespokeCanPlay(player: IPlayer): boolean {
-    return player.getResourceCount(CardResource.FLOATER) > 0;
+    if (player.getResourceCount(CardResource.FLOATER) === 0) {
+      return false;
+    }
+    if (player.game.isSoloMode()) {
+      return true;
+    }
+    return StealResources.getCandidates(player, Resource.MEGACREDITS, 5, true).length > 0;
   }
 
   public override bespokePlay(player: IPlayer) {
-    player.game.defer(new StealResources(player, Resource.MEGACREDITS, 5));
+    player.game.defer(new StealResources(player, Resource.MEGACREDITS, 5, undefined, true));
     player.game.defer(new RemoveResourcesFromCard(player, CardResource.FLOATER, 1, {source: 'self', blockable: false}));
     return undefined;
   }

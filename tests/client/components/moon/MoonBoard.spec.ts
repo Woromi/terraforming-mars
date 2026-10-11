@@ -1,5 +1,5 @@
 import {shallowMount} from '@vue/test-utils';
-import {getLocalVue} from '../getLocalVue';
+import {globalConfig} from '../getLocalVue';
 import {expect} from 'chai';
 import MoonBoard from '@/client/components/moon/MoonBoard.vue';
 import MoonSpace from '@/client/components/moon/MoonSpace.vue';
@@ -8,13 +8,11 @@ import {SpaceType} from '@/common/boards/SpaceType';
 
 const model: MoonModel = {
   habitatRate: 0,
-  logisticsRate: 0,
+  logisticRate: 0,
   miningRate: 0,
   spaces: [
     {
       id: 'm01',
-      x: 1,
-      y: 1,
       bonus: [],
       spaceType: SpaceType.COLONY,
       color: undefined,
@@ -23,8 +21,6 @@ const model: MoonModel = {
     },
     {
       id: 'm37',
-      x: 2,
-      y: 1,
       bonus: [],
       spaceType: SpaceType.COLONY,
       color: undefined,
@@ -33,8 +29,6 @@ const model: MoonModel = {
     },
     {
       id: 'm02',
-      x: 3,
-      y: 1,
       bonus: [],
       spaceType: SpaceType.LUNAR_MINE,
       color: undefined,
@@ -43,8 +37,6 @@ const model: MoonModel = {
     },
     {
       id: 'm03',
-      x: 3,
-      y: 1,
       bonus: [],
       spaceType: SpaceType.LAND,
       color: undefined,
@@ -58,11 +50,11 @@ const model: MoonModel = {
 describe('MoonBoard', () => {
   it('has visible tiles on the board', async () => {
     const wrapper = shallowMount(MoonBoard, {
-      localVue: getLocalVue(),
-      propsData: {model, tileView: 'show'},
+      ...globalConfig,
+      props: {model, tileView: 'show'},
     });
 
-    const boardSpacesWrappers = wrapper.findAllComponents(MoonSpace).wrappers.filter((wrapper) => {
+    const boardSpacesWrappers = wrapper.findAllComponents(MoonSpace).filter((wrapper) => {
       return wrapper.attributes('data-test') === 'moon-board-space';
     });
 
@@ -73,11 +65,11 @@ describe('MoonBoard', () => {
 
   it('has hidden tiles on the board', async () => {
     const wrapper = shallowMount(MoonBoard, {
-      localVue: getLocalVue(),
-      propsData: {model, tileView: 'show'},
+      ...globalConfig,
+      props: {model, tileView: 'show'},
     });
 
-    const boardSpacesWrappers = wrapper.findAllComponents(MoonSpace).wrappers.filter((wrapper) => {
+    const boardSpacesWrappers = wrapper.findAllComponents(MoonSpace).filter((wrapper) => {
       return wrapper.attributes('data-test') === 'moon-board-space';
     });
 

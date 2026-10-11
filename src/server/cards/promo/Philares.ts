@@ -12,6 +12,10 @@ import {SelectResources} from '../../inputs/SelectResources';
 import {message} from '../../logs/MessageBuilder';
 import {ICorporationCard} from '../corporation/ICorporationCard';
 
+const HELP_TEXT = `
+Philares's effect does not trigger when tiles are placed on The Moon. This is an intentional decision to prevent it from being overpowered.
+` as const;
+
 export class Philares extends CorporationCard implements ICorporationCard {
   constructor() {
     super({
@@ -26,7 +30,6 @@ export class Philares extends CorporationCard implements ICorporationCard {
 
       metadata: {
         cardNumber: 'R25',
-        hasExternalHelp: true,
         description: 'You start with 47 M€. As your first action, place a greenery tile and raise the oxygen 1 step.',
         renderData: CardRenderer.builder((b) => {
           b.megacredits(47).nbsp.greenery();
@@ -37,6 +40,7 @@ export class Philares extends CorporationCard implements ICorporationCard {
             });
           });
         }),
+        helpText: HELP_TEXT,
       },
     });
   }

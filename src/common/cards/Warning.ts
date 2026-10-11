@@ -3,11 +3,12 @@ export type Warning =
  'undoBestEffort' |
  'maxtemp' |
  'maxoxygen' |
+ 'maxoxygen-reduce' |
  'maxoceans' |
  'maxvenus' |
  'maxHabitatRate' |
  'maxMiningRate' |
- 'maxLogisticsRate' |
+ 'maxLogisticRate' |
  'decreaseOwnProduction' |
  'removeOwnPlants' |
  'buildOnLuna' |
@@ -22,4 +23,6 @@ export type Warning =
  'selfTarget' |
  'pharmacyUnion' |
  'kaguyaTech' |
- 'underworldtokendiscard';
+ 'underworldtokendiscard' |
+ 'hostileTakeover';
+

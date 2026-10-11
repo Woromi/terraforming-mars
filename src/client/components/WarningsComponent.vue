@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import {Warning} from '@/common/cards/Warning';
 
 const descriptions: Record<Warning, string> = {
@@ -15,11 +15,12 @@ const descriptions: Record<Warning, string> = {
   'undoBestEffort': 'Undo is best effort only. Please do not report any bugs if it is broken.',
   'maxtemp': 'Note: the temperature is already at its goal.',
   'maxoxygen': 'Note: the oxygen level is already at its goal.',
+  'maxoxygen-reduce': 'Note: the oxygen level cannot be reduced once it\'s already at its goal.',
   'maxoceans': 'Note: all oceans are already on the board.',
   'maxvenus': 'Note: Venus scale is already at its goal.',
   'maxHabitatRate': 'Note: Moon habitat rate is already at its goal.',
   'maxMiningRate': 'Note: Moon mining rate is already at its goal.',
-  'maxLogisticsRate': 'Note: Moon logistics rate is already at its goal.',
+  'maxLogisticRate': 'Note: Moon logistic rate is already at its goal.',
   'decreaseOwnProduction': 'Warning: you are the only player that can lose production.',
   'removeOwnPlants': 'Warning: this will remove your own plants',
   'buildOnLuna': 'You will only be able to build the colony on Luna.',
@@ -34,14 +35,15 @@ const descriptions: Record<Warning, string> = {
   'selfTarget': 'Note: This action will target you.',
   'pharmacyUnion': 'Note: playing a card with a microbe tag will cause you to lose 4 M€ (or as much as possible).',
   'kaguyaTech': 'Warning: Your only greeneries are special tiles.',
+  'hostileTakeover': 'Note: One of the tiles you co-own will have to be Lunar Mine Urbanization.',
   'underworldtokendiscard': 'Warning: You will have to discard an underworld resource token you rely on.',
 };
 
-export default Vue.extend({
+export default defineComponent({
   name: 'WarningsComponent',
   props: {
     warnings: {
-      type: Array as () => Array<Warning>,
+      type: Array as () => ReadonlyArray<Warning>,
       default: () => {
         return [];
       },

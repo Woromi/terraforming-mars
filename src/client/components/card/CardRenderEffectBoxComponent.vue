@@ -1,5 +1,5 @@
 <template>
-      <div :class="getClasses()">
+      <div class="card-effect-box">
         <div class="card-effect-box-row">
             <div v-if="delimiter !== undefined && cause !== undefined" class="card-effect-box-content">
                 <div v-for="(rowItem, rowIndex) in cause" class="card-effect-box-item" :key="rowIndex">
@@ -9,7 +9,7 @@
                   <CardRenderTileComponent v-if="isTile(rowItem)" :item="rowItem"/>
                 </div>
             </div>
-            <CardRenderSymbolComponent v-if="delimiter !== undefined" :item="delimiter" />
+            <CardRenderSymbolComponent v-if="isSymbol(delimiter)" :item="delimiter" />
             <div class="card-effect-box-content">
                 <div v-for="(rowItem, rowIndex) in effect" class="card-effect-box-item" :key="rowIndex">
                     <CardRenderItemComponent v-if="isItem(rowItem)" :item="rowItem"/>
@@ -25,7 +25,7 @@
 
 <script lang="ts">
 
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import CardRenderItemComponent from '@/client/components/card/CardRenderItemComponent.vue';
 import CardRenderSymbolComponent from '@/client/components/card/CardRenderSymbolComponent.vue';
 import {ICardRenderEffect, isICardRenderItem, isICardRenderProductionBox} from '@/common/cards/render/Types';
@@ -35,7 +35,7 @@ import {isICardRenderSymbol, isICardRenderTile, ItemType} from '@/common/cards/r
 
 import CardDescription from '@/client/components/card/CardDescription.vue';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'CardRenderEffectBoxComponent',
   props: {
     effectData: {
@@ -51,9 +51,6 @@ export default Vue.extend({
     CardDescription,
   },
   methods: {
-    getClasses(): string {
-      return 'card-effect-box';
-    },
     isItem: isICardRenderItem,
     isSymbol: isICardRenderSymbol,
     isProductionBox: isICardRenderProductionBox,

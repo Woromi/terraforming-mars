@@ -8,7 +8,7 @@ import {UnseededRandom} from '../../common/utils/Random';
 import {MilestoneName, milestoneNames} from '../../common/ma/MilestoneName';
 import {AwardName, awardNames} from '../../common/ma/AwardName';
 import {synergies} from './MilestoneAwardSynergies';
-import {MAManifest, isCompatible} from './MAManifest';
+import {isCompatible, MAManifest} from './MAManifest';
 import {intersection} from '../../common/utils/utils';
 
 type DrawnMilestonesAndAwards = {
@@ -72,11 +72,14 @@ export function chooseMilestonesAndAwards(gameOptions: GameOptions): DrawnMilest
     case BoardName.THARSIS:
     case BoardName.HELLAS:
     case BoardName.ELYSIUM:
+    case BoardName.UTOPIA_PLANITIA:
     case BoardName.ARABIA_TERRA:
     case BoardName.AMAZONIS:
     case BoardName.TERRA_CIMMERIA:
+    case BoardName.TERRA_CIMMERIA_NOVA:
     case BoardName.VASTITAS_BOREALIS:
-    case BoardName.VASTITAS_BOREALIS_NOVUS:
+    case BoardName.VASTITAS_BOREALIS_NOVA:
+    case BoardName.AMAZONIS_PLANITIA:
       push(milestoneManifest.boards[boardName], awardManifest.boards[gameOptions.boardName]);
       break;
     default:
@@ -111,6 +114,13 @@ export function chooseMilestonesAndAwards(gameOptions: GameOptions): DrawnMilest
   return drawnMilestonesAndAwards;
 }
 
+/** Boards with no volcanic spaces. Exported for tests. */
+export const BOARDS_WITHOUT_VOLCANIC_SPACES: ReadonlyArray<BoardName> = [
+  BoardName.HELLAS,
+  BoardName.UTOPIA_PLANITIA,
+  BoardName.HOLLANDIA,
+];
+
 /**
  * Return the list of possible milestones and awards for a given game. Only meant to work with random selection.
  *
@@ -120,12 +130,21 @@ export function chooseMilestonesAndAwards(gameOptions: GameOptions): DrawnMilest
  */
 export function getCandidates(gameOptions: GameOptions): [Array<MilestoneName>, Array<AwardName>] {
   function include<T extends string>(name: T, manifest: MAManifest<T, any>): boolean {
-    // When using modular, don't include non-modular MAs.
-    if (gameOptions.modularMA) {
-      throw new Error('Not supporting modular awards yet.');
+    // Never include deprecated MAs in random candidates.  They generally have "more official" versions that will be
+    // considered for inclusion.
+    if (manifest.all[name].deprecated) {
+      return false;
     }
 
-    if (!gameOptions.modularMA) {
+    const random = manifest.all[name].random;
+    if (gameOptions.modularMA) {
+      if (random === undefined) {
+        return false;
+      }
+      if (name === 'Geologist' && BOARDS_WITHOUT_VOLCANIC_SPACES.includes(gameOptions.boardName)) {
+        return false;
+      }
+    } else {
       // The game boards this MA appears in, if any.
       const boards = Object.values(BoardName).filter((boardName) => manifest.boards[boardName].includes(name));
 
@@ -137,9 +156,8 @@ export function getCandidates(gameOptions: GameOptions): [Array<MilestoneName>, 
       if (boards.length > 0 && gameOptions.includeFanMA === false) {
         return false;
       }
-
-      // Disable the new modular awards until they're weighted.
-      if (manifest.modular.includes(name)) {
+      // Modular MAs are not part of our own built random MAs.
+      if (random === 'modular') {
         return false;
       }
     }
@@ -230,7 +248,9 @@ export function verifySynergyRules(
       const synergy = synergies.get(mas[i], mas[j]);
       max = Math.max(synergy, max);
       totalSynergy += synergy;
-      if (synergy >= constraints.highThreshold) numberOfHigh++;
+      if (synergy >= constraints.highThreshold) {
+        numberOfHigh++;
+      }
     }
   }
   return max <= constraints.maxSynergyAllowed &&

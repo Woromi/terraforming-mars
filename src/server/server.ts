@@ -1,36 +1,42 @@
-require('dotenv').config();
+import '@/server/init';
 require('console-stamp')(
   console,
   {format: ':date(yyyy-mm-dd HH:MM:ss Z)'},
 );
+import {markAsLiveServer} from '@/server/utils/server';
+// Must run first.
+markAsLiveServer();
 
-import * as https from 'https';
-import * as http from 'http';
-import * as fs from 'fs';
-import * as raw_settings from '../genfiles/settings.json';
-import * as prometheus from 'prom-client';
+import https from 'https';
+import http from 'http';
+import fs from 'fs';
+import * as v8 from 'node:v8';
+import {performance} from 'node:perf_hooks';
+import raw_settings from '../genfiles/settings.json';
+import prometheus from 'prom-client';
 import * as responses from './server/responses';
-import * as ansi from 'ansi-escape-sequences';
+import ansi from 'ansi-escape-sequences';
 
-import {Database} from './database/Database';
-import {runId, serverId} from './utils/server-ids';
-import {processRequest} from './server/requestProcessor';
-import {timeAsync} from './utils/timer';
-import {GameLoader} from './database/GameLoader';
-import {globalInitialize} from './globalInitialize';
-import {SessionManager} from './server/auth/SessionManager';
+import {Database} from '@/server/database/Database';
+import {runId, serverId} from '@/server/utils/server-ids';
+import {processRequest} from '@/server/server/requestProcessor';
+import {timeAsync} from '@/server/utils/timer';
+import {GameLoader} from '@/server/database/GameLoader';
+import {globalInitialize} from '@/server/globalInitialize';
+import {SessionManager} from '@/server/server/auth/SessionManager';
 
 process.on('uncaughtException', (err: any) => {
   console.error('UNCAUGHT EXCEPTION', err);
 });
 
 function requestHandler(req: http.IncomingMessage, res: http.ServerResponse): void {
-  try {
-    processRequest(req, res);
-  } catch (error) {
+  processRequest(req, res).catch((error) => {
     responses.internalServerError(req, res, error);
-  }
+  });
 }
+
+// The event loop utilization snapshot from the previous scrape.
+let lastEventLoopUtilization = performance.eventLoopUtilization();
 
 const metrics = {
   startServer: new prometheus.Gauge({
@@ -43,7 +49,38 @@ const metrics = {
     help: 'Time to initialize the database',
     registers: [prometheus.register],
   }),
-
+  // The V8 old-space ceiling. Compare against heap usage to see OOM headroom.
+  // Not included in prom-client's default metrics.
+  heapSizeLimit: new prometheus.Gauge({
+    name: 'nodejs_heap_size_limit_bytes',
+    help: 'V8 heap size limit in bytes',
+    registers: [prometheus.register],
+    collect() {
+      this.set(v8.getHeapStatistics().heap_size_limit);
+    },
+  }),
+  // A non-zero (and growing) value is a strong memory-leak signal.
+  detachedContexts: new prometheus.Gauge({
+    name: 'nodejs_detached_contexts',
+    help: 'Number of detached V8 contexts (a memory-leak signal)',
+    registers: [prometheus.register],
+    collect() {
+      this.set(v8.getHeapStatistics().number_of_detached_contexts);
+    },
+  }),
+  // Fraction of time the event loop was busy (0 to 1) since the previous scrape.
+  // Idle time is 1 minus this value.
+  // Not included in prom-client's default metrics.
+  eventLoopUtilization: new prometheus.Gauge({
+    name: 'nodejs_eventloop_utilization',
+    help: 'Fraction of time the event loop was busy since the last scrape',
+    registers: [prometheus.register],
+    collect() {
+      const current = performance.eventLoopUtilization();
+      this.set(performance.eventLoopUtilization(current, lastEventLoopUtilization).utilization);
+      lastEventLoopUtilization = current;
+    },
+  }),
 };
 
 function createServer(): http.Server | https.Server {

@@ -1,13 +1,12 @@
 <template>
 <div>
-  <div v-if="experimentalUI()" v-i18n>
+  <div v-if="experimentalUI" v-i18n>
     <label>
-      <input type="checkbox" v-model="showReorder" /> Reorder Cards
+      <input type="checkbox" v-model="showReorder" > Reorder Cards
     </label>
   </div>
   <div class="sortable-cards">
-    <div ref="draggers" :class="{ 'dragging': Boolean(dragCard) }" v-for="(card, index) in getSortedCards()" :key="card.name" draggable="true" v-on:dragend="onDragEnd()" v-on:dragstart="onDragStart(card.name)">
-      <div v-if="dragCard" ref="droppers" class="drop-target" v-on:dragover="onDragOver(card.name)"></div>
+    <div ref="draggers" :class="{ 'dragging': Boolean(dragCard) }" v-for="(card, index) in getSortedCards()" :key="card.name" draggable="true" @dragend="onDragEnd()" @dragstart="onDragStart(card.name)" @dragover.prevent="onDragOver(card.name, $event)">
       <div ref="cardbox" class="cardbox" @click="clickMethod">
         <Card :card="card"/>
         <div v-if="showReorder" class="reorder-banners-container">
@@ -16,18 +15,19 @@
         </div>
       </div>
     </div>
-    <div v-if="dragCard" ref="dropend" class="drop-target" v-on:dragover="onDragOver('end')"></div>
   </div>
 </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 import Card from '@/client/components/card/Card.vue';
 import {CardName} from '@/common/cards/CardName';
 import {CardModel} from '@/common/models/CardModel';
 import {CardOrderStorage} from '@/client/utils/CardOrderStorage';
 import {getPreferences} from '@/client/utils/PreferencesManager';
+import {comparing} from '@/common/utils/Ordering';
+import {SortOrder, sortCards} from '@/client/utils/SortOrder';
 
 type DataModel = {
   /** When true use the point-and-click reorder UI */
@@ -38,7 +38,30 @@ type DataModel = {
   dragCard: CardName | undefined;
 };
 
-export default Vue.extend({
+/**
+ * Returns the stored order for `cards`, with any cards missing from storage placed at the end.
+ */
+function initialCardOrder(playerId: string, cards: ReadonlyArray<CardModel>): {[x: string]: number} {
+  const cache = CardOrderStorage.getCardOrder(playerId);
+  const cardOrder: {[x: string]: number} = {};
+  const keys = Object.keys(cache);
+  let max = 0;
+  for (const key of keys) {
+    if (cards.find((card) => card.name === key) !== undefined) {
+      cardOrder[key] = cache[key];
+      max = Math.max(max, cache[key]);
+    }
+  }
+  max++;
+  for (const card of cards) {
+    if (cardOrder[card.name] === undefined) {
+      cardOrder[card.name] = max++;
+    }
+  }
+  return cardOrder;
+}
+
+export default defineComponent({
   name: 'SortableCards',
   components: {
     Card,
@@ -46,31 +69,37 @@ export default Vue.extend({
   props: {
     cards: {
       type: Array as () => Array<CardModel>,
+      required: true,
     },
     playerId: {
       type: String,
+      required: true,
+    },
+    /**
+     * Current sort order, or undefined once the player reorders by hand.
+     *
+     * Changing it re-sorts the cards.
+     */
+    sortOrder: {
+      type: Object as () => SortOrder | undefined,
+      required: false,
+    },
+  },
+  emits: ['update:sortOrder'],
+  watch: {
+    cards(cards: Array<CardModel>): void {
+      this.cardOrder = initialCardOrder(this.playerId, cards);
+    },
+    sortOrder(sortOrder: SortOrder | undefined): void {
+      if (sortOrder !== undefined) {
+        this.sortBy(sortOrder);
+      }
     },
   },
   data(): DataModel {
-    const cache = CardOrderStorage.getCardOrder(this.playerId);
-    const cardOrder: {[x: string]: number} = {};
-    const keys = Object.keys(cache);
-    let max = 0;
-    for (const key of keys) {
-      if (this.cards.find((card) => card.name === key) !== undefined) {
-        cardOrder[key] = cache[key];
-        max = Math.max(max, cache[key]);
-      }
-    }
-    max++;
-    for (const card of this.cards) {
-      if (cardOrder[card.name] === undefined) {
-        cardOrder[card.name] = max++;
-      }
-    }
     return {
       showReorder: false,
-      cardOrder: cardOrder,
+      cardOrder: initialCardOrder(this.playerId, this.cards),
       dragCard: undefined,
     };
   },
@@ -81,44 +110,46 @@ export default Vue.extend({
         this.cards,
       );
     },
+    sortBy(sortOrder: SortOrder): void {
+      sortCards(this.getSortedCards(), sortOrder).forEach((card, index) => this.cardOrder[card.name] = index + 1);
+      CardOrderStorage.updateCardOrder(this.playerId, this.cardOrder);
+    },
     onDragStart(source: CardName): void {
       this.dragCard = source;
     },
     onDragEnd(): void {
       this.dragCard = undefined;
     },
-    onDragOver(source: CardName | 'end'): void {
+    onDragOver(source: CardName, event: DragEvent): void {
       if (this.dragCard === undefined || source === this.dragCard) {
         return;
       }
-      // put the card at the end of the list
-      if (source === 'end') {
-        let max = 0;
-        const keys = Object.keys(this.cardOrder);
-        for (const key of keys) {
-          max = Math.max(max, this.cardOrder[key]);
-        }
-        this.cardOrder[this.dragCard] = max + 1;
-      } else {
-        // place it ahead of the card
-        const temp = this.cardOrder[source];
-        const keys = Object.keys(this.cardOrder);
-        for (const key of keys) {
-          if (this.cardOrder[key] >= temp) {
-            this.cardOrder[key]++;
-          }
-        }
-        this.cardOrder[this.dragCard] = temp;
+
+      const cardNames = this.getSortedCards().map((card) => card.name);
+      const dragIndex = cardNames.indexOf(this.dragCard);
+      if (dragIndex === -1) {
+        return;
       }
+
+      const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+      const insertAfter = event.clientX >= rect.left + rect.width / 2;
+      const draggedCard = cardNames.splice(dragIndex, 1)[0];
+      cardNames.splice(cardNames.indexOf(source) + (insertAfter ? 1 : 0), 0, draggedCard);
+      cardNames.forEach((cardName, index) => this.cardOrder[cardName] = index + 1);
+      this.$emit('update:sortOrder');
       CardOrderStorage.updateCardOrder(this.playerId, this.cardOrder);
     },
     doNotDragAndDropOnReorder() {
       return this.showReorder ? 'do-not-drag-and-drop' : '';
     },
     clickMethod(e: MouseEvent) {
-      if (!this.showReorder) return;
+      if (!this.showReorder) {
+        return;
+      }
       const target = e.currentTarget as HTMLElement;
-      if (!target) return;
+      if (!target) {
+        return;
+      }
       if (target.matches('.sortable-cards *')) {
         const rect = target.getBoundingClientRect();
         const x = (e.clientX - rect.left) / rect.width;
@@ -131,16 +162,19 @@ export default Vue.extend({
               const thisCard = textContent.trim();
               this.cardOrder[thisCard] += direction;
               Object.entries(this.cardOrder)
-                .sort((a, b) => a[1]-b[1])
+                .sort(comparing((entry) => entry[1]))
                 .forEach((entry, i) => {
                   this.cardOrder[entry[0]] = i+1;
                 });
+              this.$emit('update:sortOrder');
               CardOrderStorage.updateCardOrder(this.playerId, this.cardOrder);
             }
           }
         }
       }
     },
+  },
+  computed: {
     experimentalUI(): boolean {
       return getPreferences().experimental_ui;
     },

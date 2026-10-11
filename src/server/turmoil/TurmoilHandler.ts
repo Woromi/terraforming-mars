@@ -1,5 +1,6 @@
 import * as constants from '../../common/constants';
 import {ICard} from '../cards/ICard';
+import {IProjectCard} from '../cards/IProjectCard';
 import {GlobalParameter} from '../../common/GlobalParameter';
 import {SelectOption} from '../inputs/SelectOption';
 import {IPlayer} from '../IPlayer';
@@ -7,14 +8,16 @@ import {PlayerInput} from '../PlayerInput';
 import {Resource} from '../../common/Resource';
 import {SpaceType} from '../../common/boards/SpaceType';
 import {GREENS_POLICY_2, GREENS_POLICY_3} from './parties/Greens';
-import {KELVINISTS_POLICY_4} from './parties/Kelvinists';
+import {KELVINISTS_POLICY_3, KELVINISTS_POLICY_4} from './parties/Kelvinists';
 import {MARS_FIRST_POLICY_2} from './parties/MarsFirst';
 import {PartyHooks} from './parties/PartyHooks';
 import {PartyName} from '../../common/turmoil/PartyName';
 import {REDS_POLICY_2} from './parties/Reds';
-import {MoonExpansion} from '../moon/MoonExpansion';
+import {UNITY_POLICY_4} from './parties/Unity';
 import {TRSource} from '../../common/cards/TRSource';
 import {IPolicy, policyDescription} from './Policy';
+import {message} from '../logs/MessageBuilder';
+import {agendaInfoById} from '@/common/turmoil/Types';
 
 export class TurmoilHandler {
   private constructor() {}
@@ -25,8 +28,16 @@ export class TurmoilHandler {
       return undefined;
     }
     const policy: IPolicy = turmoil.rulingPolicy();
+    // kp03 is rendered in the Convert Heat slot by Player.getActions(); skip
+    // here to avoid double-rendering.
+    if (policy.id === KELVINISTS_POLICY_3.id) {
+      return undefined;
+    }
     if (policy.canAct?.(player)) {
-      return new SelectOption(policyDescription(policy, player), 'Pay').andThen(() => policy.action?.(player));
+      const description = policyDescription(policy, player);
+      const partyName = agendaInfoById(policy.id).name;
+      const m = message('${0} (Turmoil ${1})', (b) => b.string(description).partyName(partyName));
+      return new SelectOption(m, 'Pay').andThen(() => policy.action?.(player));
     }
     return undefined;
   }
@@ -41,6 +52,14 @@ export class TurmoilHandler {
     if (PartyHooks.shouldApplyPolicy(player, PartyName.MARS, 'mp02')) {
       MARS_FIRST_POLICY_2.onCardPlayed(player, selectedCard);
     }
+  }
+
+  public static getCardDiscount(player: IPlayer, card: IProjectCard): number {
+    // PoliticalAgendas Unity P4 hook
+    if (PartyHooks.shouldApplyPolicy(player, PartyName.UNITY, 'up04')) {
+      return UNITY_POLICY_4.getCardDiscount(player, card);
+    }
+    return 0;
   }
 
   public static resolveTilePlacementCosts(player: IPlayer): void {
@@ -84,7 +103,9 @@ export class TurmoilHandler {
   }
 
   public static computeTerraformRatingBump(player: IPlayer, tr: TRSource = {}): number {
-    if (!PartyHooks.shouldApplyPolicy(player, PartyName.REDS, 'rp01')) return 0;
+    if (!PartyHooks.reds01PolicyInEffect(player)) {
+      return 0;
+    }
 
     // Making a local copy since it's going to get mutated.
     tr = {...tr};
@@ -92,7 +113,7 @@ export class TurmoilHandler {
     let total = 0;
 
     if (tr.oxygen !== undefined) {
-      const availableSteps = constants.MAX_OXYGEN_LEVEL - player.game.getOxygenLevel();
+      const availableSteps = player.game.max.oxygen - player.game.getOxygenLevel();
       const steps = Math.min(availableSteps, tr.oxygen);
       total = total + steps;
       if (player.game.getOxygenLevel() < constants.OXYGEN_LEVEL_FOR_TEMPERATURE_BONUS &&
@@ -102,7 +123,7 @@ export class TurmoilHandler {
     }
 
     if (tr.temperature !== undefined) {
-      const availableSteps = Math.floor((constants.MAX_TEMPERATURE - player.game.getTemperature()) / 2);
+      const availableSteps = Math.floor((player.game.max.temperature - player.game.getTemperature()) / 2);
       const steps = Math.min(availableSteps, tr.temperature);
       total = total + steps;
       if (player.game.getTemperature() < constants.TEMPERATURE_FOR_OCEAN_BONUS &&
@@ -112,13 +133,13 @@ export class TurmoilHandler {
     }
 
     if (tr.oceans !== undefined) {
-      const availableSteps = constants.MAX_OCEAN_TILES - player.game.board.getOceanSpaces().length;
+      const availableSteps = player.game.max.oceans - player.game.board.getOceanSpaces().length;
       const steps = Math.min(availableSteps, tr.oceans);
       total = total + steps;
     }
 
     if (tr.venus !== undefined) {
-      const availableSteps = Math.floor((constants.MAX_VENUS_SCALE - player.game.getVenusScaleLevel()) / 2);
+      const availableSteps = Math.floor((player.game.max.venus - player.game.getVenusScaleLevel()) / 2);
       const steps = Math.min(availableSteps, tr.venus);
       total = total + steps;
       if (player.game.getVenusScaleLevel() < constants.VENUS_LEVEL_FOR_TR_BONUS &&
@@ -127,7 +148,8 @@ export class TurmoilHandler {
       }
     }
 
-    MoonExpansion.ifMoon(player.game, (moonData) => {
+    const moonData = player.game.moonData;
+    if (moonData) {
       if (tr.moonHabitat !== undefined) {
         const availableSteps = constants.MAXIMUM_HABITAT_RATE - moonData.habitatRate;
         total = total + Math.min(availableSteps, tr.moonHabitat);
@@ -138,11 +160,11 @@ export class TurmoilHandler {
         total = total + Math.min(availableSteps, tr.moonMining);
       }
 
-      if (tr.moonLogistics !== undefined) {
-        const availableSteps = constants.MAXIMUM_LOGISTICS_RATE - moonData.logisticRate;
-        total = total + Math.min(availableSteps, tr.moonLogistics);
+      if (tr.moonLogistic !== undefined) {
+        const availableSteps = constants.MAXIMUM_LOGISTIC_RATE - moonData.logisticRate;
+        total = total + Math.min(availableSteps, tr.moonLogistic);
       }
-    });
+    }
 
     total += tr.tr ?? 0;
 
