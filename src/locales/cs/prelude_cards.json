@@ -1,137 +1,75 @@
 {
-  "Psychrophiles": "",
-    "Action: Add 1 microbe to this card.": "",
-    "Effect: When paying for a plant card, microbes here may be used as 2 M€ each.": "",
-    "Temperature must be -20 C or lower.": "",
-
-  "Research Coordination": "",
-    "After being played, when you perform an action, the wild tag counts as any tag of your choice.": "",
-
-  "SF Memorial": "",
-    "Draw 1 card.": "",
-
-  "Martian Survey": "",
-    "Oxygen must be 4% or lower. Draw two cards.": "",
-
-  "House Printing": "",
-    "Increase your steel production 1 step.": "",
-
-  "Space Hotels": "",
-    "Requires 2 Earth tags. Increase M€ production 4 steps.": "",
-
-  "Lava Tube Settlement": "",
-    "Decrease your energy production 1 step and increase your M€ production 2 steps. Place a city tile on a VOLCANIC AREA regardless of adjacent cities.": "",
-  
-  "Industrial Complex": "",
-    "Lose 18 M€. INCREASE ALL YOUR PRODUCTIONS THAT ARE LOWER THAN 1, TO 1.": "",
-  
-  "Soil Bacteria": "",
-    "Effect: When playing a plant tag or a microbe tag, including this, gain 1 plant.": "",
-    "Draw 2 microbe cards and gain 3 plants.": "",
-  
-  "Preservation Program": "",
-    "Effect: SKIP THE FIRST TR YOU GAIN IN EACH GENERATION'S ACTION PHASE.": "",
-    "Raise your TR 5 steps.": "",
-  
-  "Venus L1 Shade": "",
-  
-  "Old Mining Colony": "",
-    "Increase your titanium production 1 step. Place 1 colony. Discard 1 card.": "",
-    
-  "Colonial Representation": "",
-    "Gain 3 M€ per colony you have.": "",
-    
-  "Envoys From Venus": "",
-    "Requires 3 Venus tags. Place 2 delegates in 1 party.": "",
-    
-  "Colonial Envoys": "",
-    "Requires that Unity is ruling or that you have 2 delegates there. Place 1 delegate for each colony you have. YOU MAY PLACE THEM IN SEPERATE PARTIES.": "",
-    
-  "Jovian Envoys": "",
-    "Requires 2 Jovian tags. Place 2 delegates in 1 party.": "",
-    
-  "Microgravity Nutrition": "",
-    "Increase your M€ production 1 step for each colony you have.": "",
-    
-  "Sponsoring Nation": "",
-    "Requires 4 Earth tags. Gain 3 TR. Place 2 delegates.": "",
-    
-  "Stratospheric Expedition": "",
-    "Add two floaters to ANY CARD. Draw 2 Venus cards.": "",
-    
-  "Summit Logistics": "",
-    "Requires that Scientists are ruling or that you have 2 delegates there. Gain 1 M€ per planet tag and colony you have. Draw 2 cards.": "",
-  
-  "Terraforming Deal": "",
-    "Effect: Each step your TR is raised, you gain 2 M€.": "",
-    
-  "Venus Contract": "",
-    "Effect: Each step you raise Venus, gain 3 M€.": "",
-    "Draw 1 Venus card. Raise your TR 1 step.": "",
-  
-  "Project Eden": "",
-    "Place 1 ocean tile, 1 city tile, and 1 greenery tile. Discard 3 cards.": "",
-    
-  "Planetary Alliance": "",
-    "Raise your TR 2 steps. Draw 1 Jovian card and 1 Venus card.": "",
-    
-  "Recession": "",
-    "EACH OPPONENT loses 5 M€ and decreases their M€ production 1 step. You gain 10 M€.": "",
-
-  "Nobel Prize": "",
-    "Gain 5 M€. Draw 2 cards with requirements.": "",
-
-  "Rise To Power": "",
-    "Increase your M€ production 3 steps and place 3 delegates. YOU MAY PLACE THEM IN SEPARATE PARTIES.": "",
-
-  "Space Lanes": "",
-    "Effect: When you play a Jovian, Earth, or Venus tag, you pay 2 M€ less for it.": "",
-    "Gain 3 titanium.": "",
-  
-  "World Government Advisor": "",
-    "Action: RAISE 1 GLOBAL PARAMETER WITHOUT GETTING ANY TR OR OTHER BONUSES.": "",
-    "Raise your TR 2 steps. Draw 1 card.": "",
-  
-  "Main Belt Asteroids": "",
-    "Action: Gain 1 asteroid to ANY CARD.": "",
-    "Effect: When gaining an asteroid HERE, gain 1 titanium.": "",
-    "Lose 5 M€. 1 VP per 2 asteroids here.": "",
-
-  "Colony Trade Hub": "",
-    "Effect: When any colony is placed, gain 2 M€.": "",
-    "Increase your energy production 1 step. Gain 2 titanium": "",
-    
-  "Applied Science": "",
-    "Action: Remove 1 resource here to either add 1 resource to ANY CARD WITH A RESOURCE or gain 1 standard resource.": "",
-    "Add 6 science resources here.": "",
- 
-  "Atmospheric Enhancers": "",
-    "Raise temperature 2 steps, or raise oxygen 2 steps, or raise Venus 2 steps. Draw 2 cards with floater icons.": "",
-
-  "Board of Directors": "",
-    "ACTION: ": "",
-    "DRAW 1 PRELUDE CARD: EITHER DISCARD IT, OR PAY 12 M€ AND REMOVE 1 DIRECTOR RESOURCE HERE TO PLAY IT.": "",
-    "Add 4 director resources here.": "",
-  
-  "Floating Trade Hub": "",
-    "Action: Add 2 floaters to ANY card.": "",
-    "Action: Remove any number of floaters here to gain that many of one standard resource.": "",
-  
-  "Early Colonization": "",
-    "INCREASE ALL COLONY TRACKS 2 STEPS": "",
-    "Place a colony. Gain 3 energy.": "",
-  
-  "Corridors of Power": "",
-    "Effect: Each time you become party leader, draw 1 card.": "",
-    "Raise your TR 1 step and gain 4 M€": "",
-  
-  "Focused Organization": "",
-    "Action: Discard 1 card and spend 1 standard resource to draw 1 card and gain 1 standard resource.": "",
-    "Draw 1 card and gain 1 standard resource.": "",
-  
-  "Suitable Infrastructure": "",
-    "Effect: Once per action you take, gain 2 M€ if you increase any productions.": "",
-  
-  "High Circles": "",
-    "Raise your TR 1 step and draw 1 card with PARTY REQUIREMENT. Place 2 delegates in one party.": ""
+  "Ceres Tech Market": "Technologický trh na Ceres",
+  "Action: Discard any number of cards from your hand to gain 2 M€ for each discarded card.": "Akce: Odhoď z ruky libovolný počet karet a získej 2 M€ za každou odhozenou kartu.",
+  "Gain 2 M€ per colony you own.": "Získej 2 M€ za každou svou stanici.",
+  "Cloud Tourism": "Turistika v oblacích",
+  "Increase your M€ production 1 step for each pair of Earth and Venus tags you own. 1 VP for every 3rd floater on this card.": "Zvyš svůj příjem o 1 za každý svůj pár symbolů kategorie „Země“ a „Venuše“. 1 VB za každé 3 J plošin zde.",
+  "Colonial Envoys": "Vyslanci kolonií",
+  "Requires that Unity is ruling or that you have 2 delegates there. Place 1 delegate for each colony you have. YOU MAY PLACE THEM IN SEPARATE PARTIES.": "Vládnoucí stranou musí být Unie, nebo v ní musíš mít 2 delegáty. Zařaď 1 delegáta za každou svou stanici. MŮŽEŠ JE ZAŘADIT DO RŮZNÝCH STRAN.",
+  "Colonial Representation": "Zastoupení kolonií",
+  "Gain 3 M€ per colony you have.": "Získej 3 M€ za každou svou stanici.",
+  "Envoys From Venus": "Vyslanci z Venuše",
+  "Requires 3 Venus tags. Place 2 delegates in 1 party.": "Musíš mít min. 3 symboly kategorie „Venuše“. Zařaď 2 delegáty do 1 strany.",
+  "Floating Refinery": "Levitující rafinerie",
+  "Action: Add 1 floater here, or remove 2 floaters from ANY CARD to gain 1 titanium and 2 M€.": "Akce: Polož sem 1 J plošin NEBO odhoď 2 J plošin z LIBOVOLNÉ KARTY a získej 1 J titanu a 2 M€.",
+  "Add 1 floater here for each Venus tag you have.": "Polož sem 1 J plošin za každý svůj symbol kategorie „Venuše“.",
+  "Frontier Town": "Pohraniční město",
+  "Requires that Mars First is ruling or that you have 2 delegates there. Decrease your energy production one step. Place a city tile. GAIN THE PRINTED PLACEMENT BONUS 2 ADDITIONAL TIMES.": "Vládnoucí stranou musí být Mars sobě!, nebo v ní musíš mít 2 delegáty. Sniž svou produkci energie o 1. Umísti destičku města. ZÍSKEJ VYTIŠTĚNÝ BONUS ZA UMÍSTĚNÍ JEŠTĚ 2KRÁT NAVÍC.",
+  "GHG Shipment": "Dodávka skleníkových plynů",
+  "Requires that Kelvinists are in power or that you have 2 delegates there. Increase your heat production 1 step. Gain 1 heat for each floater you have.": "Vládnoucí stranou musí být Kelvinovo hnutí, nebo v něm musíš mít 2 delegáty. Zvyš svou produkci tepla o 1. Získej 1 J tepla za každou svou 1 J plošin.",
+  "Ishtar Expedition": "Expedice Ishtar",
+  "Requires Venus 10%. Gain 3 titanium and draw 2 Venus cards.": "Stav Venuše musí být min. 10 %. Získej 3 J titanu a dober si 2 karty kategorie „Venuše“.",
+  "Jovian Envoys": "Vyslanci z Jupiteru",
+  "Requires 2 Jovian tags. Place 2 delegates in 1 party.": "Musíš mít min. 2 symboly kategorie „Jupiter“. Zařaď 2 delegáty do 1 strany.",
+  "L1 Trade Terminal": "Obchodní terminál L1",
+  "Effect: When you trade, you may first increase that colony tile track 2 steps.": "Efekt: Když obchoduješ s kolonií, můžeš nejprve posunout ukazatel na její liště o 2 pole doprava.",
+  "Add a resource to 3 different cards that already have resources.": "Polož 1 J zdroje na 3 různé karty, na kterých už nějaké zdroje leží.",
+  "Microgravity Nutrition": "Výživa v mikrogravitaci",
+  "Increase your M€ production 1 step for each colony you have.": "Zvyš svůj příjem o 1 za každou svou stanici.",
+  "Red Appeasement": "Usmíření Rudých",
+  "Requires that Reds are ruling or that you have 2 delegates there, AND THAT NO OTHER PLAYER HAS PASSED.": "Vládnoucí stranou musí být Rudí, nebo v ní musíš mít 2 delegáty, A ŽÁDNÝ JINÝ HRÁČ JEŠTĚ NESMÍ MÍT PASOVÁNO.",
+  "Increase M€ production 2 steps. This counts as passing. You get no other turns this generation.": "Zvyš svůj příjem o 2. Tím zároveň pasuješ. V této generaci už nebudeš na tahu.",
+  "PASS": "PAS",
+  "Soil Studies": "Studium půdy",
+  "Requires that temperature is -4 C or lower. Gain 1 plant per Venus tag, plant tag, and colony you have.": "Teplota musí být max. -4 °C. Získej 1 J rostlin za každý svůj symbol kategorie „Venuše“ a „rostliny“ a za každou svou stanici.",
+  "Special Permit": "Zvláštní povolení",
+  "Requires that Greens are ruling or that you have 2 delegates there. Steal 4 plants from any player.": "Vládnoucí stranou musí být Zelení, nebo v ní musíš mít 2 delegáty. Ukradni 4 J rostlin libovolnému hráči.",
+  "Sponsoring Nation": "Sponzorský stát",
+  "Requires 4 Earth tags. Gain 3 TR. Place 2 delegates.": "Musíš mít min. 4 symboly kategorie „Země“. Zvyš svůj TR o 3. Zařaď 2 delegáty.",
+  "Stratospheric Expedition": "Stratosférická expedice",
+  "Add two floaters to ANY CARD. Draw 2 Venus cards.": "Polož 2 J plošin na LIBOVOLNOU KARTU. Dober si 2 karty kategorie „Venuše“.",
+  "Summit Logistics": "Logistika summitu",
+  "Requires that Scientists are ruling or that you have 2 delegates there. Gain 1 M€ per planet tag and colony you have. Draw 2 cards.": "Vládnoucí stranou musí být Syndikát akademiků, nebo v něm musíš mít 2 delegáty. Získej 1 M€ za každý svůj planetární symbol kategorie a každou svou stanici. Dober si 2 karty.",
+  "FAN EXPANSION NOTE: This includes Mars but not The Moon.": "POZNÁMKA K FANOUŠKOVSKÉMU ROZŠÍŘENÍ: Zahrnuje Mars, ale ne Měsíc.",
+  "Unexpected Application": "Nečekané využití",
+  "Discard 1 card to terraform Venus 1 step.": "Odhoď 1 kartu a zvyš stav Venuše o 1.",
+  "Venus Allies": "Spojenci z Venuše",
+  "Raise Venus 2 steps. Gain 4 M€ per colony you have.": "Zvyš stav Venuše o 2. Získej 4 M€ za každou svou stanici.",
+  "Venus Orbital Survey": "Orbitální průzkum Venuše",
+  "Action: Reveal the top 2 cards, take any venus cards to hand for free. Any other card you either buy or discard": "Akce: Odkryj vrchní 2 karty balíčku a karty kategorie „Venuše“ si zdarma vezmi do ruky. Každou jinou kartu si buď kup, nebo ji odhoď",
+  "Venus Shuttles": "Raketoplány na Venuši",
+  "Action: Spend 12 M€ to raise Venus 1 step. This cost is REDUCED BY 1 FOR EACH VENUS TAG you have.": "Akce: Za 12 M€ zvyš stav Venuše o 1. Tato cena SE SNIŽUJE O 1 ZA KAŽDÝ TVŮJ SYMBOL KATEGORIE „VENUŠE“.",
+  "Add 2 floaters to ANY VENUS CARD.": "Polož 2 J plošin na LIBOVOLNOU kartu kategorie „Venuše“.",
+  "Venus Trade Hub": "Venušské obchodní centrum",
+  "Effect: When you trade, gain 3 M€.": "Efekt: Když obchoduješ s kolonií, získej 3 M€.",
+  "Requires 2 Venus tags.": "Musíš mít min. 2 symboly kategorie „Venuše“.",
+  "WG Project": "Projekt SV",
+  "Requires that you are Chairman. DRAW 3 PRELUDE CARDS AND PLAY 1 OF THEM, Discard the other 2.": "Musíš být prezident. DOBER SI 3 KARTY PŘEDEHRY A 1 Z NICH ZAHRAJ, zbylé 2 odhoď.",
+  "Psychrophiles": "Psychrofilové",
+  "Research Coordination": "Koordinace výzkumu",
+  "SF Memorial": "Památník sci-fi",
+  "Martian Survey": "Průzkum Marsu",
+  "House Printing": "Tisk domů",
+  "Space Hotels": "Vesmírné hotely",
+  "Lava Tube Settlement": "Osada v lávovém tunelu",
+  "ACTION: ": "AKCE: ",
+  "Select player to steal ${0} ${1} from": "Vyber hráče, kterému ukradneš ${1} (${0} J)",
+  "Lose 5 M€ and 1 M€ production": "Ztrať 5 M€ a sniž svůj příjem o 1",
+  "Select how to pay 12 M€": "Vyber, jak zaplatíš 12 M€",
+  "Add microbe to ${0}": "Polož 1 J mikrobů na kartu ${0}",
+  "Not enough corporations while resolving ${0}": "Při vyhodnocení karty ${0} není dost korporací",
+  "Add 1 microbe to this card.": "Polož sem 1 J mikrobů.",
+  "When you trade, you may first increase that colony tile track 2 steps.": "Když obchoduješ s kolonií, můžeš nejprve posunout ukazatel na její liště o 2 pole doprava.",
+  "max": "max.",
+  "When paying for a plant card, microbes here may be used as 2 M€ each.": "Když platíš za kartu kategorie „rostliny“, můžeš použít mikroby odsud v hodnotě 1 J mikrobů = 2 M€."
 }

@@ -1,84 +1,43 @@
 {
-    "Desperate Measures": "",
-    "Place a bronze cube on a dust storm tile and raise oxygen 1 step, or place a bronze cube on an erosion tile and raise the temperature 1 step. The hazard tile with the bronze cube cannot be removed.": "",
-
-    "Mining Area": "",
-    "Place one of these tiles on an area with a steel or titanium placement bonus, ADJACENT TO ANOTHER OF YOUR TILES. This tile provides an ADJACENCY BONUS of the same resource as the area. Increase your production of that resource 1 step.": "",
-
-    "Industrial Center": "",
-    "Action: Spend 7 M€ to increase your steel production 1 step.": "",
-    "Place this tile adjacent to a city tile. This tile grants an ADJACENCY BONUS of 1 steel.": "",
-
-    "Marketing Experts": "",
-    "Effect: When an ADJACENCY BONUS is collected from a tile you own, you gain 1 M€.": "",
-    "Increase your M€ production 1 step.": "",
-
-    "Bioengineering Enclosure": "",
-    "Action: Remove 1 animal from THIS card to add 1 animal to ANOTHER card.": "",
-    "Requires 1 science tag to play. Add 2 animals to this card. OTHERS MAY NOT REMOVE ANIMALS FROM THIS CARD.": "",
-
-    "Butterfly Effect": "",
-    "Gain 1 TR. Move each hazard marker up to 1 step up or down along its terraforming track.": "",
-    "All hazard markers": "",
-
-    "Geological Survey": "",
-    "Any max 5 Greeneries": "",
-    "Effect: When placing a tile ON MARS grants you any steel, titanium, or heat, you gain one additional of each of those resources that you gain.": "",
-    "Requires 5 or fewer greeneries on Mars.": "",
-
-    "Ecological Survey": "",
-    "Any 3 Greeneries": "",
-    "Effect: When placing a tile grants you any plants, animals or microbes, you gain one additional of each of those resources that you gain.": "",
-    "Requires 3 greeneries on Mars.": "",
-
-    "Mining Rights": "",
-    "Place one of these tiles on an area with a steel or titanium placement bonus. This tile provides an ADJACENCY BONUS of the same resource as the area. Increase your production of that resource 1 step.": "",
-
-    "Natural Preserve": "",
-    "Oxygen must be 4% or less. Place this tile NEXT TO NO OTHER TILE. The tile grants an ADJACENCY BONUS of of 1 M€. Increase your M€ production 1 step.": "",
-
-    "Ocean Sanctuary": "",
-    "1 VP per animal on this card.": "",
-    "Requires 5 ocean tiles. Place this tile on top of an existing ocean tile. The tile grants an ADJACENCY BONUS of 1 animal. Add 1 animal to this card.": "",
-
-    "Nuclear Zone": "",
-    "Raise the temperature two steps. Place this tile. Players must pay an additional 2M€ when they place a tile with their player marker on it ADJACENT to the Nuclear Zone.": "",
-
-    "Restricted Area": "",
-    "Action: Spend 2 M€ to draw a card.": "",
-    "Place this tile which grants an ADJACENCY BONUS of 1 card.": "",
-
-    "Solar Farm": "",
-    "Place this tile which grants an ADJACENCY BONUS of 2 energy. Increase your energy production 1 step for each plant resource on the area where you place the tile.": "",
-
-    "Ecological Zone": "",
-    "Effect: When you play an animal or plant tag INCLUDING THESE, add an animal to this card.": "",
-    "the tile grants an adjacency bonus of 1 animal. 1 VP per 2 animals on this card.": "",
-    "Requires that YOU have a greenery tile. Place this tile adjacent to ANY greenery.": "",
-
-    "Bio-Fertilizer Facility": "",
-    "Requires 1 science tag. Increase your plant production 1 step. Add up to 2 microbes to ANY card. Place this tile which grants an ADJACENCY BONUS of 1 plant and 1 microbe.": "",
-
-    "Metallic Asteroid": "",
-    "Raise temperature 1 step and gain 1 titanium. Remove up to 4 plants from any player. Place this tile which grants an ADJACENCY BONUS of 1 titanium.": "",
-
-    "Ocean Farm": "",
-    "Requires 4 ocean tiles. Increase your heat production 1 step and increase your plant production 1 step. Place this tile on top of an existing ocean tile. The tile grants an ADJACENCY BONUS of 1 plant.": "",
-
-    "Commercial District": "",
-    "1 VP per adjacent city tile.": "",
-    "Place this tile which grants an ADJACENCY BONUS of 2 M€. Decrease your energy production 1 step and increase your M€ production 4 steps.": "",
-
-    "Ocean City": "",
-    "Requires 6 ocean tiles. Decrease your energy production 1 step and increase your M€ production 3 steps. Place this tile on top of an existing ocean tile, IGNORING NORMAL PLACEMENT RESTRICTIONS FOR CITIES. The tile counts as a city as well as an ocean.": "",
-
-    "Lava Flows": "",
-    "Raise temperature 2 steps and place this tile ON EITHER THARSIS THOLUS, ASCRAEUS MONS, PAVONIS MONS OR ARSIA MONS. This tile grants an ADJACENCY BONUS of 2 heat.": "",
-
-    "Mohole Area": "",
-    "Increase your heat production 4 steps. Place this tile ON AN AREA RESERVED FOR OCEAN. The tile grants an ADJACENCY BONUS of 2 heat.": "",
-
-    "Capital": "",
-    "1 additional VP for each ocean tile adjacent to this city tile.": "",
-    "Requires 4 ocean tiles. Place tile with ADJACENCY BONUS of 2 M€. Energy prod -2 and M€ prod +5.": ""
+  "Desperate Measures": "Zoufalá opatření",
+  "Place a bronze cube on a dust storm tile and raise oxygen 1 step, or place a bronze cube on an erosion tile and raise the temperature 1 step. The hazard tile with the bronze cube cannot be removed.": "Polož měděnou kostičku na destičku prachové bouře a zvyš obsah kyslíku o 1, NEBO polož měděnou kostičku na destičku eroze a zvyš teplotu o 1. Destičku nebezpečí s měděnou kostičkou nelze odstranit.",
+  "Place one of these tiles on an area with a steel or titanium placement bonus, ADJACENT TO ANOTHER OF YOUR TILES. This tile provides an ADJACENCY BONUS of the same resource as the area. Increase your production of that resource 1 step.": "Umísti jednu z těchto destiček na pole s bonusem za umístění v podobě oceli nebo titanu, VEDLE JINÉ SVÉ DESTIČKY. Tato destička poskytuje BONUS ZA SOUSEDSTVÍ ve stejném zdroji, jaký je na poli. Zvyš svou produkci tohoto zdroje o 1.",
+  "Place this tile adjacent to a city tile. This tile grants an ADJACENCY BONUS of 1 steel.": "Umísti tuto destičku vedle destičky města. Tato destička poskytuje BONUS ZA SOUSEDSTVÍ 1 J oceli.",
+  "Marketing Experts": "Marketingoví experti",
+  "Effect: When an ADJACENCY BONUS is collected from a tile you own, you gain 1 M€.": "Efekt: Když někdo získá BONUS ZA SOUSEDSTVÍ z tvé destičky, získáš 1 M€.",
+  "Increase your M€ production 1 step.": "Zvyš svůj příjem o 1.",
+  "Bioengineering Enclosure": "Bioinženýrský výběh",
+  "Action: Remove 1 animal from THIS card to add 1 animal to ANOTHER card.": "Akce: Odeber 1 J zvířat z TÉTO karty a polož 1 J zvířat na JINOU kartu.",
+  "Requires 1 science tag to play. Add 2 animals to this card. OTHERS MAY NOT REMOVE ANIMALS FROM THIS CARD.": "Musíš mít min. 1 symbol „věda“. Polož sem 2 J zvířat. OSTATNÍ HRÁČI Z TÉTO KARTY NESMĚJÍ ODEBÍRAT ZVÍŘATA.",
+  "Butterfly Effect": "Motýlí efekt",
+  "Gain 1 TR. Move each hazard marker up to 1 step up or down along its terraforming track.": "Získej 1 TR. Posuň každý ukazatel nebezpečí o nejvýše 1 pole nahoru nebo dolů po stupnici jeho hlavního faktoru.",
+  "All hazard markers": "Všechny ukazatele nebezpečí",
+  "Geological Survey": "Geologický průzkum",
+  "Any max 5 Greeneries": "Max. 5 destiček zeleně celkem",
+  "Effect: When placing a tile ON MARS grants you any steel, titanium, or heat, you gain one additional of each of those resources that you gain.": "Efekt: Když ti umístění destičky NA MARS přinese ocel, titan nebo teplo, získáš navíc 1 J od každého z těchto zdrojů, který získáváš.",
+  "Requires 5 or fewer greeneries on Mars.": "Na Marsu smí být max. 5 destiček zeleně.",
+  "Ecological Survey": "Ekologický průzkum",
+  "Any 3 Greeneries": "3 destičky zeleně celkem",
+  "Effect: When placing a tile grants you any plants, animals or microbes, you gain one additional of each of those resources that you gain.": "Efekt: Když ti umístění destičky přinese rostliny, zvířata nebo mikroby, získáš navíc 1 J od každého z těchto zdrojů, který získáváš.",
+  "Requires 3 greeneries on Mars.": "Na Marsu musejí být min. 3 destičky zeleně.",
+  "Decrease your energy production 4 steps and increase your plant production 2 steps. Raise your TR 3 steps. Place this tile, which provides an ADJACENCY BONUS of 1 plant and 1 microbe.": "Sniž svou produkci energie o 4 a zvyš svou produkci rostlin o 2. Zvyš svůj TR o 3. Umísti tuto destičku, která poskytuje BONUS ZA SOUSEDSTVÍ 1 J rostlin a 1 J mikrobů.",
+  "Place one of these tiles on an area with a steel or titanium placement bonus. This tile provides an ADJACENCY BONUS of the same resource as the area. Increase your production of that resource 1 step.": "Umísti jednu z těchto destiček na pole s bonusem za umístění v podobě oceli nebo titanu. Tato destička poskytuje BONUS ZA SOUSEDSTVÍ ve stejném zdroji, jaký je na poli. Zvyš svou produkci tohoto zdroje o 1.",
+  "Oxygen must be 4% or less. Place this tile NEXT TO NO OTHER TILE. The tile grants an ADJACENCY BONUS of of 1 M€. Increase your M€ production 1 step.": "Obsah kyslíku musí být max. 4 %. Umísti tuto destičku tak, aby NESOUSEDILA S ŽÁDNOU JINOU DESTIČKOU. Destička poskytuje BONUS ZA SOUSEDSTVÍ 1 M€. Zvyš svůj příjem o 1.",
+  "Requires 5 ocean tiles. Place this tile on top of an existing ocean tile. The tile grants an ADJACENCY BONUS of 1 animal. Add 1 animal to this card.": "Na plánu musí být min. 5 destiček oceánu. Umísti tuto destičku na existující destičku oceánu. Destička poskytuje BONUS ZA SOUSEDSTVÍ 1 J zvířat. Polož sem 1 J zvířat.",
+  "Raise the temperature two steps. Place this tile. Players must pay an additional 2M€ when they place a tile with their player marker on it ADJACENT to the Nuclear Zone.": "Zvyš teplotu o 2. Umísti tuto destičku. Hráči musejí zaplatit navíc 2 M€, když umísťují destičku se svou obsazovací kostičkou VEDLE Nukleární zóny.",
+  "Place this tile which grants an ADJACENCY BONUS of 1 card.": "Umísti tuto destičku, která poskytuje BONUS ZA SOUSEDSTVÍ 1 kartu.",
+  "Place this tile which grants an ADJACENCY BONUS of 2 energy. Increase your energy production 1 step for each plant resource on the area where you place the tile.": "Umísti tuto destičku, která poskytuje BONUS ZA SOUSEDSTVÍ 2 J energie. Zvyš svou produkci energie o 1 za každou J rostlin v bonusu za umístění na poli, kam destičku umístíš.",
+  "Requires 4 ocean tiles. Increase your energy production 2 steps. Place this tile ADJACENT TO an ocean tile. The tile grants an ADJACENCY BONUS of 2 Energy.": "Na plánu musejí být min. 4 destičky oceánu. Zvyš svou produkci energie o 2. Umísti tuto destičku VEDLE destičky oceánu. Destička poskytuje BONUS ZA SOUSEDSTVÍ 2 J energie.",
+  "Raise temperature 3 steps and gain 4 steel. Place this tile ADJACENT TO no city tile. It provides adjacency bonus of 1 asteroid and 1 steel. Remove up to 6 plants from any player.": "Zvyš teplotu o 3 a získej 4 J oceli. Umísti tuto destičku tak, aby NESOUSEDILA s žádnou destičkou města. Poskytuje bonus za sousedství 1 J meteoritů a 1 J oceli. Odhoď až 6 J rostlin libovolného hráče.",
+  "The tile grants an ADJACENCY BONUS of 1 animal. 1 VP per 2 animals on this card.": "Destička poskytuje BONUS ZA SOUSEDSTVÍ 1 J zvířat. 1 VB za každé 2 J zvířat zde.",
+  "Bio-Fertilizer Facility": "Výrobna biohnojiv",
+  "Requires 1 science tag. Increase your plant production 1 step. Add up to 2 microbes to ANY card. Place this tile which grants an ADJACENCY BONUS of 1 plant and 1 microbe.": "Musíš mít min. 1 symbol „věda“. Zvyš svou produkci rostlin o 1. Polož až 2 J mikrobů na LIBOVOLNOU kartu. Umísti tuto destičku, která poskytuje BONUS ZA SOUSEDSTVÍ 1 J rostlin a 1 J mikrobů.",
+  "Raise temperature 1 step and gain 1 titanium. Remove up to 4 plants from any player. Place this tile which grants an ADJACENCY BONUS of 1 titanium.": "Zvyš teplotu o 1 a získej 1 J titanu. Odhoď až 4 J rostlin libovolného hráče. Umísti tuto destičku, která poskytuje BONUS ZA SOUSEDSTVÍ 1 J titanu.",
+  "Requires 4 ocean tiles. Increase your heat production 1 step and increase your plant production 1 step. Place this tile on top of an existing ocean tile. The tile grants an ADJACENCY BONUS of 1 plant.": "Na plánu musejí být min. 4 destičky oceánu. Zvyš svou produkci tepla o 1 a svou produkci rostlin o 1. Umísti tuto destičku na existující destičku oceánu. Destička poskytuje BONUS ZA SOUSEDSTVÍ 1 J rostlin.",
+  "Place this tile which grants an ADJACENCY BONUS of 2 M€. Decrease your energy production 1 step and increase your M€ production 4 steps.": "Umísti tuto destičku, která poskytuje BONUS ZA SOUSEDSTVÍ 2 M€. Sniž svou produkci energie o 1 a zvyš svůj příjem o 4.",
+  "Ocean City": "Město v oceánu",
+  "Requires 6 ocean tiles. Decrease your energy production 1 step and increase your M€ production 3 steps. Place this tile on top of an existing ocean tile, IGNORING NORMAL PLACEMENT RESTRICTIONS FOR CITIES. The tile counts as a city as well as an ocean.": "Na plánu musí být min. 6 destiček oceánu. Sniž svou produkci energie o 1 a zvyš svůj příjem o 3. Umísti tuto destičku na existující destičku oceánu BEZ OHLEDU NA BĚŽNÁ OMEZENÍ PRO UMÍSŤOVÁNÍ MĚST. Destička se počítá jako město i jako oceán.",
+  "Raise temperature 2 steps and place this tile ON EITHER THARSIS THOLUS, ASCRAEUS MONS, PAVONIS MONS OR ARSIA MONS. This tile grants an ADJACENCY BONUS of 2 heat.": "Zvyš teplotu o 2 a umísti tuto destičku NA THARSIS THOLUS, ASCRAEUS MONS, PAVONIS MONS NEBO ARSIA MONS. Tato destička poskytuje BONUS ZA SOUSEDSTVÍ 2 J tepla.",
+  "Increase your heat production 4 steps. Place this tile ON AN AREA RESERVED FOR OCEAN. The tile grants an ADJACENCY BONUS of 2 heat.": "Zvyš svou produkci tepla o 4. Umísti tuto destičku NA POLE VYHRAZENÉ PRO OCEÁN. Destička poskytuje BONUS ZA SOUSEDSTVÍ 2 J tepla.",
+  "Requires 4 ocean tiles. Place tile with ADJACENCY BONUS of 2 M€. Energy prod -2 and M€ prod +5.": "Na plánu musejí být min. 4 destičky oceánu. Umísti destičku s BONUSEM ZA SOUSEDSTVÍ 2 M€. Produkce energie −2, příjem +5."
 }

@@ -1,55 +1,38 @@
 {
-    "Aerial Lenses": "",
-    "Requires that Kelvinists are ruling or that you have 2 delegates there. Remove up to 2 plants from any player. Increase your heat production 2 steps.": "",
-    
-	"Banned Delegate": "",
-    "Requires that you are Chairman. Remove any NON-LEADER delegate.": "",
-    
-	"Cultural Metropolis": "",
-    "Requires that Unity is ruling or that you have 2 delegates there. Decrease your energy production 1 step and increase your M€ production 3 steps. Place a city tile. Place 2 delegates in 1 party.": "",
-    
-	"Diaspora Movement": "",
-    "Requires that Reds are ruling or that you have 2 delegates there. Gain 1M€ for each Jovian tag in play, including this.": "",
-    
-	"Event Analysts": "",
-    "Effect: You have +1 influence.": "",
-    "Requires that Scientists are ruling or that you have 2 delegates there.": "",
-    
-	"GMO Contract": "",
-    "Effect: Each time you play a plant, animal or microbe tag, including this, gain 2 M€.": "",
-    "Requires that Greens are ruling or that you have 2 delegates there.": "",
-    
-	"Martian Media Center": "",
-    "Action: Pay 3 M€ to add a delegate to any party.": "",
-    "Requires that Mars First is ruling or that you have 2 delegates there. Increase your M€ production 2 steps.": "",
-    
-	"Parliament Hall": "",
-    "Requires that Mars First are ruling or that you have 2 delegates there. Increase your M€ production 1 step for every 3 building tags you have, including this.": "",
-    
-	"PR Office": "",
-    "Requires that Unity are ruling or that you have 2 delegates there. Gain 1 TR. Gain 1 M€ for each Earth tag you have, including this.": "",
-    
-	"Public Celebrations": "",
-    "Requires that you are Chairman.": "",
-    
-	"Recruitment": "",
-    "Exchange one NEUTRAL NON-LEADER delegate with one of your own from the reserve.": "",
-    
-	"Red Tourism Wave": "",
-    "Requires that Reds are ruling or that you have 2 delegates there. Gain 1 M€ from each EMPTY AREA ADJACENT TO YOUR TILES": "",
-    
-	"Sponsored Mohole": "",
-    "Requires that Kelvinists are ruling or that you have 2 delegates there. Increase your heat production 2 steps.": "",
-    
-	"Supported Research": "",
-    "Requires that Scientists are ruling or that you have 2 delegates there. Draw 2 cards.": "",
-    
-	"Wildlife Dome": "",
-    "Requires that Greens are ruling or that you have 2 delegates there. Place a greenery tile and raise oxygen 1 step.": "",
-    
-	"Vote Of No Confidence": "",
-    "Requires that you have a Party Leader in any party and that the sitting Chairman is neutral. Remove the NEUTRAL Chairman and move your own delegate (from the reserve) there instead. Gain 1 TR.": "",
-    
-	"Political Alliance": "",
-    "Requires that you have 2 party leaders. Gain 1 TR.": ""
+  "Aerial Lenses": "Vzdušné čočky",
+  "Requires that Kelvinists are ruling or that you have 2 delegates there. Remove up to 2 plants from any player. Increase your heat production 2 steps.": "Politická podmínka: Kelvinovo hnutí. Odhoď až 2 J rostlin libovolného hráče. Zvyš svou produkci tepla o 2.",
+  "Banned Delegate": "Vyloučený delegát",
+  "Requires that you are Chairman. Remove any NON-LEADER delegate.": "Musíš být prezidentem. Odstraň libovolného delegáta, který NENÍ PŘEDSEDOU strany.",
+  "Cultural Metropolis": "Kulturní metropole",
+  "Requires that Unity is ruling or that you have 2 delegates there. Decrease your energy production 1 step and increase your M€ production 3 steps. Place a city tile. Place 2 delegates in 1 party.": "Politická podmínka: Unie. Sniž svou produkci energie o 1 a zvyš svůj příjem o 3. Umísti destičku města. Zařaď 2 delegáty do 1 strany.",
+  "Diaspora Movement": "Hnutí diaspory",
+  "Requires that Reds are ruling or that you have 2 delegates there. Gain 1M€ for each Jovian tag in play, including this.": "Politická podmínka: Rudí. Získej 1 M€ za každý symbol „Jupiter“ ve hře, včetně tohoto.",
+  "Event Analysts": "Analytici událostí",
+  "Requires that Scientists are ruling or that you have 2 delegates there.": "Politická podmínka: Syndikát akademiků.",
+  "GMO Contract": "Zakázka na GMO",
+  "Effect: Each time you play a plant, animal or microbe tag, including this, gain 2 M€.": "Efekt: Pokaždé, když zahraješ symbol „rostliny“, „zvířata“ nebo „mikrobi“ (včetně tohoto), získej 2 M€.",
+  "Requires that Greens are ruling or that you have 2 delegates there.": "Politická podmínka: Zelení.",
+  "Martian Media Center": "Marťanské mediální centrum",
+  "Action: Pay 3 M€ to add a delegate to any party.": "Akce: Za 3 M€ zařaď delegáta do libovolné strany.",
+  "Requires that Mars First is ruling or that you have 2 delegates there. Increase your M€ production 2 steps.": "Politická podmínka: Mars sobě!. Zvyš svůj příjem o 2.",
+  "Parliament Hall": "Budova parlamentu",
+  "Requires that Mars First are ruling or that you have 2 delegates there. Increase your M€ production 1 step for every 3 building tags you have, including this.": "Politická podmínka: Mars sobě!. Zvyš svůj příjem o 1 za každé 3 své symboly „stavby“, včetně tohoto.",
+  "PR Office": "PR oddělení",
+  "Requires that Unity are ruling or that you have 2 delegates there. Gain 1 TR. Gain 1 M€ for each Earth tag you have, including this.": "Politická podmínka: Unie. Získej 1 TR. Získej 1 M€ za každý svůj symbol „Země“, včetně tohoto.",
+  "Public Celebrations": "Veřejné oslavy",
+  "Requires that you are Chairman.": "Musíš být prezidentem.",
+  "Recruitment": "Přeběhlík",
+  "Exchange one NEUTRAL NON-LEADER delegate with one of your own from the reserve.": "Vyměň jednoho NEUTRÁLNÍHO delegáta, který NENÍ PŘEDSEDOU strany, za jednoho svého z kuloárů.",
+  "Red Tourism Wave": "Turistická vlna na Marsu",
+  "Requires that Reds are ruling or that you have 2 delegates there. Gain 1 M€ from each EMPTY AREA ADJACENT TO YOUR TILES": "Politická podmínka: Rudí. Získej 1 M€ za každé PRÁZDNÉ POLE SOUSEDÍCÍ S TVÝMI DESTIČKAMI",
+  "Sponsored Mohole": "Sponzorovaný tepelný vrt",
+  "Requires that Kelvinists are ruling or that you have 2 delegates there. Increase your heat production 2 steps.": "Politická podmínka: Kelvinovo hnutí. Zvyš svou produkci tepla o 2.",
+  "Supported Research": "Podpora výzkumu",
+  "Requires that Scientists are ruling or that you have 2 delegates there. Draw 2 cards.": "Politická podmínka: Syndikát akademiků. Dober si 2 karty.",
+  "Wildlife Dome": "Rezervace pod kupolí",
+  "Requires that Greens are ruling or that you have 2 delegates there. Place a greenery tile and raise oxygen 1 step.": "Politická podmínka: Zelení. Umísti destičku zeleně a zvyš obsah kyslíku o 1.",
+  "Vote Of No Confidence": "Vyslovení nedůvěry",
+  "Requires that you have a Party Leader in any party and that the sitting Chairman is neutral. Remove the NEUTRAL Chairman and move your own delegate (from the reserve) there instead. Gain 1 TR.": "Musíš mít předsedu v libovolné straně a úřadující prezident musí být neutrální. Odstraň NEUTRÁLNÍHO prezidenta a nahraď ho svým delegátem (z kuloárů). Získej 1 TR.",
+  "Political Alliance": "Politické spojenectví",
+  "Requires that you have 2 party leaders. Gain 1 TR.": "Musíš mít 2 předsedy stran. Získej 1 TR."
 }

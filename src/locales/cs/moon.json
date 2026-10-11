@@ -1,9 +1,7 @@
 {
-   "Place a habitat tile on The Moon": "",
-   "Place a mine tile on The Moon": "",
-   "Place a road tile on The Moon": "",
-   "Select a space on The Moon for a habitat tile.": "",
-   "Select a space on The Moon for a mining tile.": "",
-   "Select a space on The Moon for a road tile.": ""
+  "Place a mine tile on The Moon": "Umísti destičku dolu na Měsíc",
+  "Place a road tile on The Moon": "Umísti destičku cesty na Měsíc",
+  "Select a space on The Moon for a habitat tile.": "Vyber na Měsíci pole pro destičku osady.",
+  "Select a space on The Moon for a mining tile.": "Vyber na Měsíci pole pro destičku dolu.",
+  "Select a space on The Moon for a road tile.": "Vyber na Měsíci pole pro destičku cesty."
 }
-
