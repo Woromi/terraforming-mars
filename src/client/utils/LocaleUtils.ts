@@ -18,6 +18,7 @@ export const GAME_LOCALE_TO_BCP47: Record<LANGUAGE, string> = {
   bg: 'bg',
   nb: 'nb',
   fi: 'fi',
+  cs: 'cs',
 };
 
 export function gameLocaleToIntlLocale(lang: string): string {
