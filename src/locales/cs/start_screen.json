@@ -1,6 +1,6 @@
 {
-  "TERRAFORMING": "TERAFORMACE",
-  "MARS": "MARSU",
+  "TERRAFORMING": "MARS:",
+  "MARS": "TERAFORMACE",
   "New game": "Nová hra",
   "How to Play": "Jak hrát",
   "Cards list": "Seznam karet",
@@ -10,7 +10,7 @@
   "Join us on Discord": "Připoj se na náš Discord",
   "Create game": "Vytvořit hru",
   "Looking for people to play with": "Hledáš spoluhráče",
-  "version": "verze",
-  "deployed": "nasazeno",
+  "version": "",
+  "deployed": "",
   "Not affiliated with FryxGames, Asmodee Digital or Steam in any way.": "Nejsme nijak spojeni se společnostmi FryxGames, Asmodee Digital ani Steam."
 }

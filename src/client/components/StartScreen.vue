@@ -1,7 +1,7 @@
 <template>
 <div class="start-screen">
   <div v-i18n class="start-screen-links">
-    <div class="start-screen-header start-screen-link--title">
+    <div class="start-screen-header start-screen-link--title" :lang="lang">
       <div class="start-screen-title-top">TERRAFORMING</div>
       <div class="start-screen-title-bottom">MARS</div>
     </div>
@@ -40,6 +40,7 @@ import LanguageIcon from '@/client/components/LanguageIcon.vue';
 import PreferencesIcon from '@/client/components/PreferencesIcon.vue';
 
 import raw_settings from '@/genfiles/settings.json';
+import {getPreferences} from '@/client/utils/PreferencesManager';
 import * as constants from '@/common/constants';
 
 const previousViewport = ref('');
@@ -66,4 +67,5 @@ onBeforeUnmount(() => {
 });
 
 const DISCORD_INVITE = constants.DISCORD_INVITE;
+const lang = getPreferences().lang;
 </script>
